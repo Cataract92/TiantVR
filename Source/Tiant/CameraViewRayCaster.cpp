@@ -42,14 +42,22 @@ void UCameraViewRayCaster::TickComponent(float DeltaTime, ELevelTick TickType, F
 		FMinimalViewInfo ViewInfo;
 		Camera->GetCameraView(DeltaTime, OUT ViewInfo);
 		DrawDebugLine(GetWorld(), ViewInfo.Location + ViewInfo.Rotation.Vector() * 100.f, ViewInfo.Location + ViewInfo.Rotation.Vector() * RayCastRange, FColor(0.f, 0.f, 100.f), false, 0.f, 0, 1.f);
-		
+
 		FHitResult HitResult;
 		GetWorld()->LineTraceSingleByObjectType(OUT HitResult, ViewInfo.Location, ViewInfo.Location + ViewInfo.Rotation.Vector() * RayCastRange, FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody));
-		if (HitResult.GetActor()) {
-			if (HitResult.GetActor()->FindComponentByClass<UViewRayCastHitable>())
-				HitResult.GetActor()->SetActorLocation(HitResult.GetActor()->GetActorLocation() + FVector(0.f, 0.f, 1.f));
+
+		if (AActor* HitActor = GetValidActorByHitResult(HitResult)) {
+			HitActor->SetActorLocation(HitActor->GetActorLocation() + FVector(0.f, 0.f, 1.f));
 		}
 	}
-	// ...
+}
+
+AActor* UCameraViewRayCaster::GetValidActorByHitResult(FHitResult& HitResult) const
+{
+	// If an Actor is found && found Actor has RayCastHitable-Component && Distance <= Component-Distance
+	if (HitResult.GetActor() && HitResult.GetActor()->FindComponentByClass<UViewRayCastHitable>() && HitResult.GetActor()->FindComponentByClass<UViewRayCastHitable>()->GetHitRange() >= HitResult.Distance)
+		return HitResult.GetActor();
+	else
+		return nullptr;
 }
 

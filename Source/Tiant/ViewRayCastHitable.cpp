@@ -32,3 +32,6 @@ void UViewRayCastHitable::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	// ...
 }
 
+float UViewRayCastHitable::GetHitRange() const {
+	return HitRange;
+}

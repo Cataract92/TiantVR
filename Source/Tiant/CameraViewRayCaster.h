@@ -30,5 +30,6 @@ private:
 	
 	UPROPERTY(EditAnywhere)
 	float RayCastRange = 10000.f;
-		
+
+	AActor* GetValidActorByHitResult(FHitResult& HitResult) const;
 };

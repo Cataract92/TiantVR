@@ -24,6 +24,11 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+	float GetHitRange() const;
+
+private:
+
+	UPROPERTY(EditAnywhere)
+	float HitRange = 10000.f;
 	
 };
