@@ -26,7 +26,12 @@ public:
 
 	float GetHitRange() const;
 
+	bool DoReflect() const;
+
 private:
+
+	UPROPERTY(EditAnywhere)
+	bool bDoReflect = false;
 
 	UPROPERTY(EditAnywhere)
 	float HitRange = 10000.f;

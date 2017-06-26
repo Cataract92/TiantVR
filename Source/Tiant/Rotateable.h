@@ -2,19 +2,20 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "Engine.h"
 #include "Components/ActorComponent.h"
-#include "CameraViewRayCaster.generated.h"
+#include "Runtime/Engine/Classes/Engine/TriggerVolume.h"
+#include "Rotateable.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class TIANT_API UCameraViewRayCaster : public UActorComponent
+class TIANT_API URotateable : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UCameraViewRayCaster();
+	URotateable();
 
 protected:
 	// Called when the game starts
@@ -24,17 +25,11 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	uint16 GetMaxReflections() const;
-
 private:
 
-	APawn* PlayerPawn;
+	UPROPERTY(EditAnywhere)
+	ATriggerVolume* TriggerPlate;
+
+	AActor* TriggeringActor;
 	
-	UPROPERTY(EditAnywhere)
-	float RayCastRange = 10000.f;
-
-	UPROPERTY(EditAnywhere)
-	uint16 MaxReflections = 3;
-
-	AActor* GetValidActorByHitResult(FHitResult& HitResult, uint16 ReflectionDepth = 0) const;
 };
