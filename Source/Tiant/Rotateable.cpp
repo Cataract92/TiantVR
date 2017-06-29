@@ -20,6 +20,8 @@ void URotateable::BeginPlay()
 	Super::BeginPlay();
 
 	TriggeringActor = GetWorld()->GetFirstPlayerController()->GetPawn();
+	Camera = TriggeringActor->FindComponentByClass<UCameraComponent>();
+	InitalRotator = GetOwner()->GetActorRotation();
 	// ...
 	
 }
@@ -30,12 +32,18 @@ void URotateable::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (TriggerPlate->IsOverlappingActor(TriggeringActor)) {
-		GetOwner()->SetActorRotation(FRotator(0.f, -30.f, -90.f));
+	if (TriggerPlate->IsOverlappingCamera(DeltaTime, Camera)) {
+		if (bAddVector) {
+			GetOwner()->SetActorRotation(GetOwner()->GetActorRotation() + RotationVector);
+		}
+		else {
+			GetOwner()->SetActorRotation(RotationVector);
+		}
 	}
 	else {
-		GetOwner()->SetActorRotation(FRotator(0.f, 0.f, -90.f));
+		GetOwner()->SetActorRotation(InitalRotator);
+		FMinimalViewInfo ViewInfo;
+		Camera->GetCameraView(DeltaTime, OUT ViewInfo);
+		TextRenderer->GetTextRender()->SetText(FText::FromString(FString::Printf(TEXT("Location: %s"), &ViewInfo.Location)));
 	}
-	
 }
-

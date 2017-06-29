@@ -4,7 +4,8 @@
 
 #include "Engine.h"
 #include "Components/ActorComponent.h"
-#include "Runtime/Engine/Classes/Engine/TriggerVolume.h"
+#include "Runtime/Engine/Classes/Engine/TextRenderActor.h"
+#include "VRTriggerVolume.h"
 #include "Rotateable.generated.h"
 
 
@@ -28,8 +29,18 @@ public:
 private:
 
 	UPROPERTY(EditAnywhere)
-	ATriggerVolume* TriggerPlate;
+	AVRTriggerVolume* TriggerPlate;
 
 	AActor* TriggeringActor;
-	
+	UCameraComponent* Camera;
+
+	UPROPERTY(EditAnywhere)
+	ATextRenderActor* TextRenderer;
+
+	UPROPERTY(EditAnywhere)
+	FRotator RotationVector = FRotator(0.f,0.f,0.f);
+	FRotator InitalRotator;
+
+	UPROPERTY(EditAnywhere)
+	bool bAddVector = false;
 };

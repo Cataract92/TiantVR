@@ -28,7 +28,6 @@ void UCameraViewRayCaster::BeginPlay()
 
 	PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
 
-
 }
 
 
@@ -74,7 +73,7 @@ AActor* UCameraViewRayCaster::GetValidActorByHitResult(FHitResult& HitResult, ui
 				FHitResult NewHitResult;
 				GetWorld()->LineTraceSingleByObjectType(OUT NewHitResult, HitResult.Location, HitResult.Location + NewTraceVector * RayCastRange, FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody));
 
-				//DrawDebugLine(GetWorld(), HitResult.Location, HitResult.Location + NewTraceVector * RayCastRange, FColor(100.f, 0.f, 0.f), false, 0.f, 0, 0.5f);
+				DrawDebugLine(GetWorld(), HitResult.Location, HitResult.Location + NewTraceVector * RayCastRange, FColor(100.f, 0.f, 0.f), false, 0.f, 0, 0.5f);
 
 				return GetValidActorByHitResult(NewHitResult, ReflectionDepth + 1);
 
