@@ -29,8 +29,12 @@ public:
 	// Called when the game starts or when spawned
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
 
+	UFUNCTION()
 	void OnWordSpoken(FRecognisedPhrases phrases);
+
+	UFUNCTION()
 	void OnUnregPhrase();
+	//void OnUnregPhrase(FUnknownPhraseSignature UnknownPhraseSognature);
 
 private:
 

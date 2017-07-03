@@ -29,8 +29,8 @@ void AMySpeechRecognitionActor::BeginPlay()
 		SetConfigParam("-beam", ESpeechRecognitionParamType::VE_FLOAT, "1e-60");
 
 		TArray<FRecognitionPhrase> wordList;
-		wordList.Add(FRecognitionPhrase(FString("hello world"), EPhraseRecognitionTolerance::VE_5));
-		wordList.Add(FRecognitionPhrase(FString("go there"), EPhraseRecognitionTolerance::VE_3));
+		wordList.Add(FRecognitionPhrase(FString("reset tables"), EPhraseRecognitionTolerance::VE_1));
+		wordList.Add(FRecognitionPhrase(FString("go there"), EPhraseRecognitionTolerance::VE_4));
 		EnableKeywordMode(wordList);
 		print("ASpeechRecogTestActor:Init success2");
 	} else {
@@ -65,3 +65,9 @@ void AMySpeechRecognitionActor::OnWordSpoken(FRecognisedPhrases phrases)
 void AMySpeechRecognitionActor::OnUnregPhrase() {
 	print("Unreg Phrase");
 }
+
+/*
+void AMySpeechRecognitionActor::OnUnregPhrase(FUnknownPhraseSignature UnknownPhraseSognature) {
+	print("Unreg Phrase");
+}
+*/
