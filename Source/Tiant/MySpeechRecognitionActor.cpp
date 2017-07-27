@@ -2,7 +2,6 @@
 
 #include "MySpeechRecognitionActor.h"
 
-#define print(text) TextRenderer->GetTextRender()->SetText(FText::FromString(text))
 #define AddDynamic( UserObject, FuncName ) __Internal_AddDynamic( UserObject, FuncName, STATIC_FUNCTION_FNAME( TEXT( #FuncName ) ) )
 // Sets default values
 AMySpeechRecognitionActor::AMySpeechRecognitionActor()
@@ -20,8 +19,7 @@ void AMySpeechRecognitionActor::BeginPlay()
 	OnUnknownPhrase.AddDynamic(this, &AMySpeechRecognitionActor::OnUnregPhrase);
 	
 	if (Init(ESpeechRecognitionLanguage::VE_English)) {
-		print("ASpeechRecogTestActor:Init success");
-
+		
 		// set config params
 		SetConfigParam("-vad_prespeech", ESpeechRecognitionParamType::VE_INTEGER, "10");
 		SetConfigParam("-vad_postspeech", ESpeechRecognitionParamType::VE_INTEGER, "10");
@@ -29,12 +27,14 @@ void AMySpeechRecognitionActor::BeginPlay()
 		SetConfigParam("-beam", ESpeechRecognitionParamType::VE_FLOAT, "1e-60");
 
 		TArray<FRecognitionPhrase> wordList;
-		wordList.Add(FRecognitionPhrase(FString("reset tables"), EPhraseRecognitionTolerance::VE_1));
-		wordList.Add(FRecognitionPhrase(FString("go there"), EPhraseRecognitionTolerance::VE_4));
+		wordList.Add(FRecognitionPhrase(FString("reset"), EPhraseRecognitionTolerance::VE_3));
+		wordList.Add(FRecognitionPhrase(FString("go there"), EPhraseRecognitionTolerance::VE_5));
 		EnableKeywordMode(wordList);
-		print("ASpeechRecogTestActor:Init success2");
+		AGlobalDatabaseActor* DBActor = AGlobalDatabaseActor::GetInstance();
+			
+		DBActor->PrintDebugMessage("ASpeechRecogTestActor:Init success");
 	} else {
-		print("ASpeechRecogTestActor:Init failure");
+		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("ASpeechRecogTestActor:Init failed");
 	}
 }
 
@@ -57,17 +57,10 @@ void AMySpeechRecognitionActor::OnWordSpoken(FRecognisedPhrases phrases)
 	FString phrase;
 	for (auto& phrase : phraseArray)
 	{
-		print(phrase);
+		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage(phrase);
 	}
-	//print("ASpeechRecogTestActor:Init success");
 }
 
 void AMySpeechRecognitionActor::OnUnregPhrase() {
-	print("Unreg Phrase");
+	AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Unreg Phrase");
 }
-
-/*
-void AMySpeechRecognitionActor::OnUnregPhrase(FUnknownPhraseSignature UnknownPhraseSognature) {
-	print("Unreg Phrase");
-}
-*/

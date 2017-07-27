@@ -29,6 +29,8 @@ public:
 private:
 
 	APawn* PlayerPawn;
+
+	FCollisionObjectQueryParams CollisionParameters;
 	
 	UPROPERTY(EditAnywhere)
 	float RayCastRange = 10000.f;

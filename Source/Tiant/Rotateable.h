@@ -35,9 +35,6 @@ private:
 	UCameraComponent* Camera;
 
 	UPROPERTY(EditAnywhere)
-	ATextRenderActor* TextRenderer;
-
-	UPROPERTY(EditAnywhere)
 	FRotator RotationVector = FRotator(0.f,0.f,0.f);
 	FRotator InitalRotator;
 

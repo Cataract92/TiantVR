@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "MotionControllerComponent.h"
 #include "Runtime/Engine/Classes/GameFramework/PlayerInput.h"
+#include "Runtime/Engine/Classes/Engine/TextRenderActor.h"
+#include "Components/TextRenderComponent.h"
+#include "VRGameMode_CPP.h"
 #include "Components/SceneComponent.h"
 #include "VRGestureRegComponent.generated.h"
 
@@ -27,8 +30,6 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	
-	UFUNCTION()
-	virtual void RightMotionControllerTriggerPressed();
+
 
 };

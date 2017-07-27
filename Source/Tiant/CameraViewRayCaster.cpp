@@ -28,6 +28,9 @@ void UCameraViewRayCaster::BeginPlay()
 
 	PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
 
+	// Define CollisionParameters: PhsysicsBody for Interactables and WorlsStatic for Walls etc.
+	CollisionParameters.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
+	CollisionParameters.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
 }
 
 
@@ -45,7 +48,7 @@ void UCameraViewRayCaster::TickComponent(float DeltaTime, ELevelTick TickType, F
 		DrawDebugLine(GetWorld(), ViewInfo.Location + ViewInfo.Rotation.Vector() * 100.f, ViewInfo.Location + ViewInfo.Rotation.Vector() * RayCastRange, FColor(0.f, 0.f, 100.f), false, 0.f, 0, 1.f);
 
 		FHitResult HitResult;
-		GetWorld()->LineTraceSingleByObjectType(OUT HitResult, ViewInfo.Location, ViewInfo.Location + ViewInfo.Rotation.Vector() * RayCastRange, FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody));
+		GetWorld()->LineTraceSingleByObjectType(OUT HitResult, ViewInfo.Location, ViewInfo.Location + ViewInfo.Rotation.Vector() * RayCastRange, FCollisionObjectQueryParams(CollisionParameters));
 		if (AActor* HitActor = GetValidActorByHitResult(HitResult)) {
 			HitActor->SetActorLocation(HitActor->GetActorLocation() + FVector(0.f, 0.f, 1.f));
 		}
@@ -71,7 +74,7 @@ AActor* UCameraViewRayCaster::GetValidActorByHitResult(FHitResult& HitResult, ui
 				FVector NewTraceVector = TraceVector - 2 * FVector::DotProduct(TraceVector, HitResult.ImpactNormal) *  HitResult.ImpactNormal;
 
 				FHitResult NewHitResult;
-				GetWorld()->LineTraceSingleByObjectType(OUT NewHitResult, HitResult.Location, HitResult.Location + NewTraceVector * RayCastRange, FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody));
+				GetWorld()->LineTraceSingleByObjectType(OUT NewHitResult, HitResult.Location, HitResult.Location + NewTraceVector * RayCastRange, CollisionParameters);
 
 				DrawDebugLine(GetWorld(), HitResult.Location, HitResult.Location + NewTraceVector * RayCastRange, FColor(100.f, 0.f, 0.f), false, 0.f, 0, 0.5f);
 

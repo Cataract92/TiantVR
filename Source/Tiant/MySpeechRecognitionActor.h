@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "SpeechRecognition.h"
 #include "SpeechRecognitionActor.h"
-#include "Runtime/Engine/Classes/Engine/TextRenderActor.h"
+#include "GlobalDatabaseActor.h"
 #include "MySpeechRecognitionActor.generated.h"
 
 UCLASS()
@@ -34,10 +34,4 @@ public:
 
 	UFUNCTION()
 	void OnUnregPhrase();
-	//void OnUnregPhrase(FUnknownPhraseSignature UnknownPhraseSognature);
-
-private:
-
-	UPROPERTY(EditAnywhere)
-	ATextRenderActor* TextRenderer;
 };

@@ -2,6 +2,9 @@
 
 #include "VRGestureRegComponent.h"
 
+
+//#define DEBUGMSG(text) ((AVRGameMode_CPP*)GetWorld()->GetAuthGameMode())->GetTextRenderer()->GetTextRender()->SetText(FText::FromString(text))
+
 // Sets default values for this component's properties
 UVRGestureRegComponent::UVRGestureRegComponent()
 {
@@ -17,17 +20,6 @@ UVRGestureRegComponent::UVRGestureRegComponent()
 void UVRGestureRegComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	TArray<UActorComponent*> MotionControllerArray = GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentsByClass(UMotionControllerComponent::StaticClass());
-
-	if (MotionControllerArray.Num() == 0) return;
-
-	for (UActorComponent* ControllerActor : MotionControllerArray) {
-		UMotionControllerComponent* Controller = Cast<UMotionControllerComponent>(ControllerActor);
-		if (Controller->Hand == EControllerHand::Right) {
-			UPlayerInput* Input = GetWorld()->GetFirstPlayerController()->PlayerInput;
-		}
-	}
 }
 
 
@@ -37,10 +29,5 @@ void UVRGestureRegComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
-}
-
-void UVRGestureRegComponent::RightMotionControllerTriggerPressed()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Trigger Pressed"));
 }
 

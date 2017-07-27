@@ -42,8 +42,5 @@ void URotateable::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	}
 	else {
 		GetOwner()->SetActorRotation(InitalRotator);
-		FMinimalViewInfo ViewInfo;
-		Camera->GetCameraView(DeltaTime, OUT ViewInfo);
-		//TextRenderer->GetTextRender()->SetText(FText::FromString(FString::Printf(TEXT("Location: %s"), &ViewInfo.Location)));
 	}
 }
