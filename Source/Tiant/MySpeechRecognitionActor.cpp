@@ -57,10 +57,10 @@ void AMySpeechRecognitionActor::OnWordSpoken(FRecognisedPhrases phrases)
 	FString phrase;
 	for (auto& phrase : phraseArray)
 	{
-		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage(phrase);
+		//AGlobalDatabaseActor::GetInstance()->PrintDebugMessage(phrase);
 	}
 }
 
 void AMySpeechRecognitionActor::OnUnregPhrase() {
-	AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Unreg Phrase");
+	//AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Unreg Phrase");
 }

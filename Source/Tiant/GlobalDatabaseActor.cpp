@@ -29,8 +29,8 @@ void AGlobalDatabaseActor::PrintDebugMessage(FString Message)
 {
 	// Check is important due the use of Singleton, which could return nullptr
 	// and to check if TextRenderer is not null
-	if (this!=nullptr && TextRenderer)
-		TextRenderer->GetTextRender()->SetText(FText::FromString(Message));
+	if (this != nullptr && TextRenderer)
+		TextRenderer->GetTextRender()->SetText(FText::FromString(TextRenderer->GetTextRender()->Text.ToString() + "\n" + Message));
 }
 
 ATextRenderActor* AGlobalDatabaseActor::GetTextRenderer()
