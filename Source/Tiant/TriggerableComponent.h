@@ -44,4 +44,8 @@ public:
 	ETriggerActionEnum GetTriggeringAction();
 
 	ELambdaEnum GetLambdaEnum();
+
+	bool IsUsingPredefinedParameters();
+
+	FTriggerableParams& GetPredefinedParameters();
 };

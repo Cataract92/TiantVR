@@ -21,7 +21,7 @@ void UTriggerableComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
+	APuzzleLambdaActor::GetInstance()->RegisterLambda(TriggeringActor, GetOwner(), TriggeringAction);
 }
 
 
@@ -29,7 +29,6 @@ void UTriggerableComponent::BeginPlay()
 void UTriggerableComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 }
 
 
@@ -41,5 +40,14 @@ ETriggerActionEnum UTriggerableComponent::GetTriggeringAction()
 ELambdaEnum UTriggerableComponent::GetLambdaEnum()
 {
 	return LambdaFunction;
+}
+
+bool UTriggerableComponent::IsUsingPredefinedParameters()
+{
+	return bUsePredefinedParameters;
+}
+FTriggerableParams& UTriggerableComponent::GetPredefinedParameters()
+{
+	return Parameter;
 }
 

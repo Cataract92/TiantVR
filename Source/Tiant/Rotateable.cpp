@@ -31,7 +31,7 @@ void URotateable::BeginPlay()
 void URotateable::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	/*
 	if (TriggerPlate->IsOverlappingCamera(DeltaTime, Camera)) {
 		if (bAddVector) {
 			GetOwner()->SetActorRotation(GetOwner()->GetActorRotation() + RotationVector);
@@ -43,4 +43,5 @@ void URotateable::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	else {
 		GetOwner()->SetActorRotation(InitalRotator);
 	}
+	*/
 }

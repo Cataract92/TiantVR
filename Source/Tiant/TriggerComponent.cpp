@@ -32,3 +32,9 @@ void UTriggerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	// ...
 }
 
+void UTriggerComponent::FireLambda(ETriggerActionEnum TriggerAction, FTriggerableParams& Params)
+{
+	AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Fire Camera2");
+	APuzzleLambdaActor::GetInstance()->FireLambda(GetOwner(), TriggerAction, Params);
+}
+

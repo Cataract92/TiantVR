@@ -23,6 +23,8 @@ void AGlobalDatabaseActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Tick");
+
 }
 
 void AGlobalDatabaseActor::PrintDebugMessage(FString Message)

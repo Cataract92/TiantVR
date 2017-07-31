@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GlobalDatabaseActor.h"
+#include "EngineUtils.h"
 #include "PuzzleLambdaActor.generated.h"
 
 UENUM(BlueprintType)
@@ -53,10 +55,13 @@ public:
 
 	virtual void RegisterLambda(AActor* TriggeringActor, AActor* TriggeredActor, ETriggerActionEnum TriggerAction);
 
+	static APuzzleLambdaActor* GetInstance();
+
 private:
 	TMap<ELambdaEnum, TFunction<void(AActor* TriggeringActor, FTriggerableParams& Params)>> LambdasMap;
 	
 	TMap<AActor*, TMap<ETriggerActionEnum, TArray<AActor*>>> TriggeringActorMap;
+
 
 	virtual void AddLambdaDefinition(ELambdaEnum LambdaEnum, TFunction<void(AActor* TriggeringActor, FTriggerableParams& Params)> Lamda);
 

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "PuzzleLambdaActor.h"
+#include "GlobalDatabaseActor.h"
 #include "TriggerComponent.generated.h"
 
 
@@ -24,6 +26,6 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+	virtual void FireLambda(ETriggerActionEnum TriggerAction, FTriggerableParams& Params);
 	
 };

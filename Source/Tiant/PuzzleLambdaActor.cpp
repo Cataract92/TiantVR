@@ -16,7 +16,13 @@ APuzzleLambdaActor::APuzzleLambdaActor()
 void APuzzleLambdaActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	AddLambdaDefinition(ELambdaEnum::LE_Scene1_RotateMirror, [](AActor* TriggeringActor, FTriggerableParams& Params) {
+		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Lambda!");
+	});
+
+
+
 }
 
 // Called every frame
@@ -37,6 +43,10 @@ TFunction<void(AActor* TriggeringActor, FTriggerableParams& Params)> APuzzleLamb
 
 void APuzzleLambdaActor::FireLambda(AActor* TriggeringActor, ETriggerActionEnum TriggerAction, FTriggerableParams& Params)
 {
+
+	if (!TriggeringActorMap.Contains(TriggeringActor)) return;
+	if (!TriggeringActorMap[TriggeringActor].Contains(TriggerAction)) return;
+
 	TArray<AActor*> TriggeredActors = TriggeringActorMap[TriggeringActor][TriggerAction];
 	
 	for (TArray<AActor*>::TConstIterator IterActor(TriggeredActors); IterActor; ++IterActor) {
@@ -44,15 +54,42 @@ void APuzzleLambdaActor::FireLambda(AActor* TriggeringActor, ETriggerActionEnum 
 
 		for (TArray<UActorComponent*>::TConstIterator IterComp(Components); IterComp; ++IterComp) {
 			UTriggerableComponent* Component = (UTriggerableComponent*) *IterComp;
+			
 			if (Component->GetTriggeringAction() != TriggerAction) return;
+
+			if (Component->IsUsingPredefinedParameters()) 
+				GetLambda(Component->GetLambdaEnum())(TriggeringActor, Component->GetPredefinedParameters());
+
 			GetLambda(Component->GetLambdaEnum())(TriggeringActor, Params);
 		}
-
 	}
 }
 
 void APuzzleLambdaActor::RegisterLambda(AActor * TriggeringActor, AActor * TriggeredActor, ETriggerActionEnum TriggerAction)
 {
-	
+	if (!TriggeringActorMap.Contains(TriggeringActor)) {
+		TriggeringActorMap.Add(TriggeringActor, TMap<ETriggerActionEnum, TArray<AActor*>>());
+	}
+	if (!TriggeringActorMap[TriggeringActor].Contains(TriggerAction)) {
+		TriggeringActorMap[TriggeringActor].Add(TriggerAction, TArray<AActor*>());
+	}
+	TriggeringActorMap[TriggeringActor][TriggerAction].Add(TriggeredActor);
 }
+
+APuzzleLambdaActor* APuzzleLambdaActor::GetInstance()
+{
+	// Prevents Nullptrexception in Iterator if this is called before or while Gameinitializaion
+	if (!GEngine->GameViewport->GetWorld()) return nullptr;
+
+	// Iterate through all GlobalDatabaseActors and return the first one found
+	// (only one should exist)
+	for (TActorIterator<APuzzleLambdaActor> ActorItr(GEngine->GameViewport->GetWorld()); ActorItr; ++ActorItr) {
+		return *ActorItr;
+	}
+
+	// If no GDActor is found return null
+	return nullptr;
+}
+
+
 
