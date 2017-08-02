@@ -42,10 +42,6 @@ ELambdaEnum UTriggerableComponent::GetLambdaEnum()
 	return LambdaFunction;
 }
 
-bool UTriggerableComponent::IsUsingPredefinedParameters()
-{
-	return bUsePredefinedParameters;
-}
 FTriggerableParams& UTriggerableComponent::GetPredefinedParameters()
 {
 	return Parameter;

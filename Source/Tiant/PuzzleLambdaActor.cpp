@@ -17,11 +17,22 @@ void APuzzleLambdaActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AddLambdaDefinition(ELambdaEnum::LE_Scene1_RotateMirror, [](AActor* TriggeringActor, FTriggerableParams& Params) {
-		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Lambda!");
+	AddLambdaDefinition(ELambdaEnum::LE_Scene1_RotateMirror, [](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params) {
+		
+		if (Params.Vectors.Num() == 0)
+		{
+			AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Num == 0");
+			return;
+		}
+		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Rotate!");
+		TriggeredActor->SetActorRotation(Params.Vectors[0].Rotation());
+		
 	});
 
-
+	AddLambdaDefinition(ELambdaEnum::LE_Scene1_DoNothing, [](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params)
+	{
+		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Nothing!");
+	});
 
 }
 
@@ -31,12 +42,12 @@ void APuzzleLambdaActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void APuzzleLambdaActor::AddLambdaDefinition(ELambdaEnum LambdaEnum, TFunction<void(AActor* TriggeringActor, FTriggerableParams& Params)> Lamda)
+void APuzzleLambdaActor::AddLambdaDefinition(ELambdaEnum LambdaEnum, TFunction<void(AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params)> Lamda)
 {
 	LambdasMap.Add(LambdaEnum, Lamda);
 }
 
-TFunction<void(AActor* TriggeringActor, FTriggerableParams& Params)> APuzzleLambdaActor::GetLambda(ELambdaEnum LambdaEnum)
+TFunction<void(AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params)> APuzzleLambdaActor::GetLambda(ELambdaEnum LambdaEnum)
 {
 	return LambdasMap[LambdaEnum];
 }
@@ -53,14 +64,13 @@ void APuzzleLambdaActor::FireLambda(AActor* TriggeringActor, ETriggerActionEnum 
 		TArray<UActorComponent*> Components = (*IterActor)->GetComponentsByClass(UTriggerableComponent::StaticClass());
 
 		for (TArray<UActorComponent*>::TConstIterator IterComp(Components); IterComp; ++IterComp) {
-			UTriggerableComponent* Component = (UTriggerableComponent*) *IterComp;
+			UTriggerableComponent* Component = static_cast<UTriggerableComponent*>(*IterComp);
 			
 			if (Component->GetTriggeringAction() != TriggerAction) return;
 
-			if (Component->IsUsingPredefinedParameters()) 
-				GetLambda(Component->GetLambdaEnum())(TriggeringActor, Component->GetPredefinedParameters());
+			FTriggerableParams::SetParameter(Params, Component->GetPredefinedParameters());
 
-			GetLambda(Component->GetLambdaEnum())(TriggeringActor, Params);
+			GetLambda(Component->GetLambdaEnum())(TriggeringActor, *IterActor, Params);
 		}
 	}
 }

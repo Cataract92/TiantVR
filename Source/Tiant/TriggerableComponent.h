@@ -23,9 +23,6 @@ protected:
 private:
 
 	UPROPERTY(EditAnywhere)
-	bool bUsePredefinedParameters;
-
-	UPROPERTY(EditAnywhere, meta = (EditCondition = bUsePredefinedParameters))
 	FTriggerableParams Parameter;
 
 	UPROPERTY(EditAnywhere)
@@ -44,8 +41,6 @@ public:
 	ETriggerActionEnum GetTriggeringAction();
 
 	ELambdaEnum GetLambdaEnum();
-
-	bool IsUsingPredefinedParameters();
 
 	FTriggerableParams& GetPredefinedParameters();
 };

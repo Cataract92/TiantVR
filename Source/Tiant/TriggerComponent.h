@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "PuzzleLambdaActor.h"
 #include "GlobalDatabaseActor.h"
+#include "EngineUtils.h"
 #include "TriggerComponent.generated.h"
 
 

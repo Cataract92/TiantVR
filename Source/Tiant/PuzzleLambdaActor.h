@@ -11,7 +11,8 @@
 UENUM(BlueprintType)
 enum ETriggerActionEnum
 {
-	TAE_CameraOverlap UMETA(DisplayName = "Camera Overlapping"),
+	TAE_CameraStartOverlap UMETA(DisplayName = "Camera Start Overlapping"),
+	TAE_CameraStopOverlap UMETA(DisplayName = "Camera Stop Overlapping"),
 	TAE_OnTick UMETA(DisplayName = "On Tick")
 };
 
@@ -27,11 +28,24 @@ struct FTriggerableParams {
 
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere)
-	bool bUseRotation;
+public:
 
-	UPROPERTY(EditAnywhere, meta = (EditCondition = bUseRotation))
-	FVector Rotation;
+	UPROPERTY(EditAnywhere, meta = (EditCondition = bUseVectors))
+	TArray<FVector> Vectors;
+
+	float DeltaTime; //Used by OnTick
+
+	ETriggerActionEnum TriggerAction;
+
+	static void SetParameter(FTriggerableParams& Parameter, FTriggerableParams& PredefinedParameter)
+	{
+		if (Parameter.bUseVectors) Parameter.Vectors = PredefinedParameter.Vectors;
+
+	}
+
+private:
+	UPROPERTY(EditAnywhere)
+	bool bUseVectors;
 };
 
 UCLASS()
@@ -58,14 +72,14 @@ public:
 	static APuzzleLambdaActor* GetInstance();
 
 private:
-	TMap<ELambdaEnum, TFunction<void(AActor* TriggeringActor, FTriggerableParams& Params)>> LambdasMap;
+	TMap<ELambdaEnum, TFunction<void(AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params)>> LambdasMap;
 	
 	TMap<AActor*, TMap<ETriggerActionEnum, TArray<AActor*>>> TriggeringActorMap;
 
 
-	virtual void AddLambdaDefinition(ELambdaEnum LambdaEnum, TFunction<void(AActor* TriggeringActor, FTriggerableParams& Params)> Lamda);
+	virtual void AddLambdaDefinition(ELambdaEnum LambdaEnum, TFunction<void(AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params)> Lamda);
 
-	virtual TFunction<void(AActor* TriggeringActor, FTriggerableParams& Params)> GetLambda(ELambdaEnum LambdaEnum);
+	virtual TFunction<void(AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params)> GetLambda(ELambdaEnum LambdaEnum);
 };
 
 

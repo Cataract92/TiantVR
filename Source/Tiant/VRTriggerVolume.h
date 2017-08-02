@@ -17,13 +17,9 @@ class TIANT_API AVRTriggerVolume : public ATriggerVolume
 	
 public:
 
-	AVRTriggerVolume();
-
-	virtual void Tick(float DeltaTime) override;
+	bool IsOverlappingCamera(float DeltaTime, UCameraComponent* Camera);
 	
 private:
-
-	bool IsOverlappingCamera(float DeltaTime, UCameraComponent* Camera);
 
 	bool IsBeetweenPoints(float MinX, float MidX, float MaxX) const;
 };
