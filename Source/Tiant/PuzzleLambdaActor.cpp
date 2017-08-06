@@ -66,7 +66,7 @@ void APuzzleLambdaActor::FireLambda(AActor* TriggeringActor, ETriggerActionEnum 
 		for (TArray<UActorComponent*>::TConstIterator IterComp(Components); IterComp; ++IterComp) {
 			UTriggerableComponent* Component = static_cast<UTriggerableComponent*>(*IterComp);
 			
-			if (Component->GetTriggeringAction() != TriggerAction) return;
+			if (Component->GetTriggeringAction() != TriggerAction) continue;
 
 			FTriggerableParams::SetParameter(Params, Component->GetPredefinedParameters());
 
