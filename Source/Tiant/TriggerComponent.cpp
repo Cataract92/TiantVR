@@ -32,23 +32,39 @@ void UTriggerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	//OnTick
-	FTriggerableParams OnTickParams;
-	OnTickParams.TriggerAction= ETriggerActionEnum::TAE_OnTick;
-	OnTickParams.DeltaTime = DeltaTime;
-	//FireLambda(ETriggerActionEnum::TAE_OnTick,OnTickParams);
+	FireOnTickEvent(DeltaTime);
 
 	//CameraOverlappingEvent
+	FireOnCameraOverlappingEvent(DeltaTime);
+
+}
+
+void UTriggerComponent::FireLambda(FTriggerableParams& Params )
+{
+	APuzzleLambdaActor::GetInstance()->FireLambda(GetOwner(), Params);
+}
+
+void UTriggerComponent::FireOnTickEvent(float DeltaTime)
+{
+	FTriggerableParams OnTickParams(ETriggerActionEnum::TAE_OnTick);
+	OnTickParams.DeltaTime = DeltaTime;
+	FireLambda(OnTickParams);
+}
+
+void UTriggerComponent::FireOnCameraOverlappingEvent(float DeltaTime)
+{
 	TArray<AActor*> AttachedActors;
 	GetOwner()->GetAttachedActors(OUT AttachedActors);
 
 	bool bIsCameraOverlappingCheck = false;
 
-	for (TArray<AActor*>::TConstIterator ActorItr(AttachedActors); ActorItr; ++ActorItr) {
+	for (TArray<AActor*>::TConstIterator ActorItr(AttachedActors); ActorItr; ++ActorItr)
+	{
 		if ((*ActorItr)->IsA(AVRTriggerVolume::StaticClass()))
 		{
 			UCameraComponent* Cam = static_cast<UCameraComponent*>(GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UCameraComponent>());
 
-			bIsCameraOverlappingCheck = (static_cast<AVRTriggerVolume*>(*ActorItr))->IsOverlappingCamera(DeltaTime, Cam);
+			bIsCameraOverlappingCheck = static_cast<AVRTriggerVolume*>(*ActorItr)->IsOverlappingCamera(DeltaTime, Cam);
 			break;
 		}
 	}
@@ -57,32 +73,16 @@ void UTriggerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	if (bIsCameraOverlappingCheck && !bIsCameraOverlapping)
 	{
 		bIsCameraOverlapping = true;
-		
-		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Start Overlapp");
 
-		FTriggerableParams CameraOverlappParams;
-		CameraOverlappParams.TriggerAction = ETriggerActionEnum::TAE_CameraStartOverlap;
-		FireLambda(ETriggerActionEnum::TAE_CameraStartOverlap, CameraOverlappParams);
+		FTriggerableParams CameraOverlappParams(ETriggerActionEnum::TAE_CameraStartOverlap);
+		FireLambda(CameraOverlappParams);
 	}
-	
+
 	if (!bIsCameraOverlappingCheck && bIsCameraOverlapping) // If Camera isn't Overlapping now, but was before fire CameraStopOverlap-Event
 	{
 		bIsCameraOverlapping = false;
 
-		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Stop Overlapp");
-
-		FTriggerableParams CameraOverlappParams;
-		CameraOverlappParams.TriggerAction = ETriggerActionEnum::TAE_CameraStopOverlap;
-		FireLambda(ETriggerActionEnum::TAE_CameraStopOverlap, CameraOverlappParams);
+		FTriggerableParams CameraOverlappParams(ETriggerActionEnum::TAE_CameraStopOverlap);
+		FireLambda(CameraOverlappParams);
 	}
-	
-
-	//
-
 }
-
-void UTriggerComponent::FireLambda(ETriggerActionEnum TriggerAction, FTriggerableParams& Params)
-{
-	APuzzleLambdaActor::GetInstance()->FireLambda(GetOwner(), TriggerAction, Params);
-}
-

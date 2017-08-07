@@ -23,10 +23,14 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+
+	void FireOnTickEvent(float DeltaTime);
+
+	void FireOnCameraOverlappingEvent(float DeltaTime);
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	virtual void FireLambda(ETriggerActionEnum TriggerAction, FTriggerableParams& Params);
-	
+	virtual void FireLambda(FTriggerableParams& Params);
 };

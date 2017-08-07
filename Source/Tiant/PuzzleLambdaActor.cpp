@@ -21,12 +21,9 @@ void APuzzleLambdaActor::BeginPlay()
 		
 		if (Params.Vectors.Num() == 0)
 		{
-			AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Num == 0");
 			return;
 		}
-		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Rotate!");
-		TriggeredActor->SetActorRotation(Params.Vectors[0].Rotation());
-		
+		TriggeredActor->SetActorRotation(FRotator(Params.Vectors[0].X, Params.Vectors[0].Y, Params.Vectors[0].Z));
 	});
 
 	AddLambdaDefinition(ELambdaEnum::LE_Scene1_DoNothing, [](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params)
@@ -52,13 +49,19 @@ TFunction<void(AActor* TriggeringActor, AActor* TriggeredActor, FTriggerablePara
 	return LambdasMap[LambdaEnum];
 }
 
-void APuzzleLambdaActor::FireLambda(AActor* TriggeringActor, ETriggerActionEnum TriggerAction, FTriggerableParams& Params)
+void APuzzleLambdaActor::FireLambda(AActor* TriggeringActor,FTriggerableParams& Params)
 {
 
-	if (!TriggeringActorMap.Contains(TriggeringActor)) return;
-	if (!TriggeringActorMap[TriggeringActor].Contains(TriggerAction)) return;
+	if (Params.TriggerAction == ETriggerActionEnum::TAE_NotSet)
+	{
+		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Trigger Action not set");
+		return;
+	}
 
-	TArray<AActor*> TriggeredActors = TriggeringActorMap[TriggeringActor][TriggerAction];
+	if (!TriggeringActorMap.Contains(TriggeringActor)) return;
+	if (!TriggeringActorMap[TriggeringActor].Contains(Params.TriggerAction)) return;
+
+	TArray<AActor*> TriggeredActors = TriggeringActorMap[TriggeringActor][Params.TriggerAction];
 	
 	for (TArray<AActor*>::TConstIterator IterActor(TriggeredActors); IterActor; ++IterActor) {
 		TArray<UActorComponent*> Components = (*IterActor)->GetComponentsByClass(UTriggerableComponent::StaticClass());
@@ -66,7 +69,7 @@ void APuzzleLambdaActor::FireLambda(AActor* TriggeringActor, ETriggerActionEnum 
 		for (TArray<UActorComponent*>::TConstIterator IterComp(Components); IterComp; ++IterComp) {
 			UTriggerableComponent* Component = static_cast<UTriggerableComponent*>(*IterComp);
 			
-			if (Component->GetTriggeringAction() != TriggerAction) continue;
+			if (Component->GetTriggeringAction() != Params.TriggerAction) continue;
 
 			FTriggerableParams::SetParameter(Params, Component->GetPredefinedParameters());
 

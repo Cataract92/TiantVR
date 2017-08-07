@@ -25,6 +25,7 @@ void UTriggerableComponent::BeginPlay()
 }
 
 
+
 // Called every frame
 void UTriggerableComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {

@@ -13,7 +13,8 @@ enum ETriggerActionEnum
 {
 	TAE_CameraStartOverlap UMETA(DisplayName = "Camera Start Overlapping"),
 	TAE_CameraStopOverlap UMETA(DisplayName = "Camera Stop Overlapping"),
-	TAE_OnTick UMETA(DisplayName = "On Tick")
+	TAE_OnTick UMETA(DisplayName = "On Tick"),
+	TAE_NotSet UMETA(DisplayName = "Not Set | Do not use")
 };
 
 UENUM(BlueprintType)
@@ -37,9 +38,22 @@ public:
 
 	ETriggerActionEnum TriggerAction;
 
+	FTriggerableParams()
+	{
+		this->TriggerAction = ETriggerActionEnum::TAE_NotSet;
+	}
+
+	FTriggerableParams(ETriggerActionEnum TriggerAction)
+	{
+		this->TriggerAction = TriggerAction;
+	}
+
 	static void SetParameter(FTriggerableParams& Parameter, FTriggerableParams& PredefinedParameter)
 	{
-		if (Parameter.bUseVectors) Parameter.Vectors = PredefinedParameter.Vectors;
+		if (PredefinedParameter.bUseVectors)
+		{
+			Parameter.Vectors = PredefinedParameter.Vectors;
+		}
 
 	}
 
@@ -65,7 +79,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;	
 
-	virtual void FireLambda(AActor* TriggeringActor, ETriggerActionEnum TriggerAction, FTriggerableParams & Params);
+	virtual void FireLambda(AActor* TriggeringActor, FTriggerableParams& Params);
 
 	virtual void RegisterLambda(AActor* TriggeringActor, AActor* TriggeredActor, ETriggerActionEnum TriggerAction);
 
