@@ -2,7 +2,7 @@
 
 #include "PuzzleLambdaActor.h"
 #include "TriggerableComponent.h"
-
+#include "AIController.h"
 
 // Sets default values
 APuzzleLambdaActor::APuzzleLambdaActor()
@@ -28,8 +28,19 @@ void APuzzleLambdaActor::BeginPlay()
 
 	AddLambdaDefinition(ELambdaEnum::LE_Scene1_DoNothing, [](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params)
 	{
-		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Nothing!");
+		
+		ATiantCharacter* TiantCharacter = AGlobalDatabaseActor::GetTiant();
+		AAIController* Controller = Cast<AAIController>(TiantCharacter->GetController());
+
+		EPathFollowingRequestResult::Type Result = Controller->MoveToLocation(FVector(-310, -270, 0));
+
+		if (Result == EPathFollowingRequestResult::Type::Failed)
+			AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Failed");
+		else
+			AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Not Failed");
 	});
+
+
 
 }
 
@@ -86,7 +97,8 @@ void APuzzleLambdaActor::RegisterLambda(AActor * TriggeringActor, AActor * Trigg
 	if (!TriggeringActorMap[TriggeringActor].Contains(TriggerAction)) {
 		TriggeringActorMap[TriggeringActor].Add(TriggerAction, TArray<AActor*>());
 	}
-	TriggeringActorMap[TriggeringActor][TriggerAction].Add(TriggeredActor);
+	if (!TriggeringActorMap[TriggeringActor][TriggerAction].Contains(TriggeredActor))
+		TriggeringActorMap[TriggeringActor][TriggerAction].Add(TriggeredActor);
 }
 
 APuzzleLambdaActor* APuzzleLambdaActor::GetInstance()

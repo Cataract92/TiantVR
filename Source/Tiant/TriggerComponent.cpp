@@ -24,8 +24,6 @@ void UTriggerComponent::BeginPlay()
 	
 }
 
-bool bIsCameraOverlapping = false;
-
 // Called every frame
 void UTriggerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -50,6 +48,8 @@ void UTriggerComponent::FireOnTickEvent(float DeltaTime)
 	OnTickParams.DeltaTime = DeltaTime;
 	FireLambda(OnTickParams);
 }
+
+bool bIsCameraOverlapping = false;
 
 void UTriggerComponent::FireOnCameraOverlappingEvent(float DeltaTime)
 {
@@ -78,7 +78,9 @@ void UTriggerComponent::FireOnCameraOverlappingEvent(float DeltaTime)
 		FireLambda(CameraOverlappParams);
 	}
 
-	if (!bIsCameraOverlappingCheck && bIsCameraOverlapping) // If Camera isn't Overlapping now, but was before fire CameraStopOverlap-Event
+
+	// If Camera isn't Overlapping now, but was before fire CameraStopOverlap-Event
+	if (!bIsCameraOverlappingCheck && bIsCameraOverlapping)
 	{
 		bIsCameraOverlapping = false;
 

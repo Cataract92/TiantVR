@@ -58,3 +58,20 @@ AGlobalDatabaseActor* AGlobalDatabaseActor::GetInstance()
 	
 }
 
+ATiantCharacter* AGlobalDatabaseActor::GetTiant()
+{
+	// Prevents Nullptrexception in Iterator if this is called before or while Gameinitializaion
+	if (!GEngine->GameViewport->GetWorld()) return nullptr;
+
+	// Iterate through all GlobalDatabaseActors and return the first one found
+	// (only one should exist)
+	for (TActorIterator<ATiantCharacter> ActorItr(GEngine->GameViewport->GetWorld()); ActorItr; ++ActorItr)
+	{
+		return *ActorItr;
+	}
+
+	// If no GDActor is found return null
+	return nullptr;
+
+}
+

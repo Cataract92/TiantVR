@@ -8,7 +8,7 @@ public class Tiant : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "SpeechRecognition" , "VRGesturePlugin" , "HeadMountedDisplay" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "SpeechRecognition" , "VRGesturePlugin" , "HeadMountedDisplay", "AIModule" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 

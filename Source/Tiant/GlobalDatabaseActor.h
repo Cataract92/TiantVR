@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "Runtime/Engine/Classes/Engine/TextRenderActor.h"
 #include "EngineUtils.h"
+#include "TiantCharacter.h"
 #include "GlobalDatabaseActor.generated.h"
 
 UCLASS()
@@ -31,6 +32,8 @@ public:
 	ATextRenderActor* GetTextRenderer();
 
 	static AGlobalDatabaseActor* GetInstance();
+
+	static ATiantCharacter* GetTiant();
 
 private:
 	UPROPERTY(EditAnywhere)
