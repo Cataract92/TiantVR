@@ -11,16 +11,18 @@
 UENUM(BlueprintType)
 enum ETriggerActionEnum
 {
-	TAE_CameraStartOverlap UMETA(DisplayName = "Camera Start Overlapping"),
-	TAE_CameraStopOverlap UMETA(DisplayName = "Camera Stop Overlapping"),
+	TAE_CameraStartOverlapp UMETA(DisplayName = "Camera Start Overlapping"),
+	TAE_CameraStopOverlapp UMETA(DisplayName = "Camera Stop Overlapping"),
+	TAE_CameraIsOverlapping UMETA(DisplayName = "Camera Is Overlapping"),
 	TAE_OnTick UMETA(DisplayName = "On Tick"),
-	TAE_NotSet UMETA(DisplayName = "Not Set | Do not use")
+	TAE_ViewRayCastHit UMETA(DisplayName = "On View-RayCast Hit"),	TAE_NotSet UMETA(DisplayName = "Not Set | Do not use")
 };
 
 UENUM(BlueprintType)
 enum ELambdaEnum
 {
 	LE_Scene1_RotateMirror UMETA(DisplayName = "Scene 1 | Rotate Mirror"),
+	LE_Scene1_RaiseTable UMETA(DisplayName = "Scene 1 | Raise Table"),
 	LE_Scene1_DoNothing UMETA(DisplayName = "Scene 1 | DoNothing")
 };
 
@@ -33,6 +35,9 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (EditCondition = bUseVectors))
 	TArray<FVector> Vectors;
+
+	UPROPERTY(EditAnywhere, meta = (EditCondition = bUseActors))
+	TArray<AActor*> Actors;
 
 	float DeltaTime; //Used by OnTick
 
@@ -60,6 +65,9 @@ public:
 private:
 	UPROPERTY(EditAnywhere)
 	bool bUseVectors;
+
+	UPROPERTY(EditAnywhere)
+	bool bUseActors;
 };
 
 UCLASS()

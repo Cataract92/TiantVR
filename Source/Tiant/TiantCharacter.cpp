@@ -21,8 +21,6 @@ void ATiantCharacter::BeginPlay()
 
 }
 
-bool bTest = true;
-
 // Called every frame
 void ATiantCharacter::Tick(float DeltaTime)
 {

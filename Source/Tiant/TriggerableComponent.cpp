@@ -21,7 +21,10 @@ void UTriggerableComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	APuzzleLambdaActor::GetInstance()->RegisterLambda(TriggeringActor, GetOwner(), TriggeringAction);
+	if (bDontUsePlayerPawn)
+		APuzzleLambdaActor::GetInstance()->RegisterLambda(TriggeringActor, GetOwner(), TriggeringAction);
+	else 
+		APuzzleLambdaActor::GetInstance()->RegisterLambda(GetWorld()->GetFirstPlayerController()->GetPawn(), GetOwner(), TriggeringAction);
 }
 
 

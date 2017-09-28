@@ -7,7 +7,24 @@
 #include "SpeechRecognition.h"
 #include "SpeechRecognitionActor.h"
 #include "GlobalDatabaseActor.h"
+#include "AIController.h"
 #include "MySpeechRecognitionActor.generated.h"
+
+USTRUCT(BlueprintType)
+struct FCustomPhraseStruct
+{
+
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere)
+	FString Phrase;
+
+	UPROPERTY(EditAnywhere)
+	EPhraseRecognitionTolerance Tolerance;
+};
+
 
 UCLASS()
 class TIANT_API AMySpeechRecognitionActor : public ASpeechRecognitionActor
@@ -34,4 +51,11 @@ public:
 
 	UFUNCTION()
 	void OnUnregPhrase();
+
+	static AMySpeechRecognitionActor* GetInstance();
+
+private:
+
+	UPROPERTY(EditAnywhere)
+	TArray<FCustomPhraseStruct> Phrases;
 };

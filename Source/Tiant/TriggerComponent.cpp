@@ -69,12 +69,19 @@ void UTriggerComponent::FireOnCameraOverlappingEvent(float DeltaTime)
 		}
 	}
 
+	if (bIsCameraOverlappingCheck)
+	{
+		FTriggerableParams CameraOverlappParams(ETriggerActionEnum::TAE_CameraIsOverlapping);
+		CameraOverlappParams.DeltaTime = DeltaTime;
+		FireLambda(CameraOverlappParams);
+	}
+
 	// If Camera is Overlapping now, but wasn't before fire CameraStartOverlap-Event
 	if (bIsCameraOverlappingCheck && !bIsCameraOverlapping)
 	{
 		bIsCameraOverlapping = true;
 
-		FTriggerableParams CameraOverlappParams(ETriggerActionEnum::TAE_CameraStartOverlap);
+		FTriggerableParams CameraOverlappParams(ETriggerActionEnum::TAE_CameraStartOverlapp);
 		FireLambda(CameraOverlappParams);
 	}
 
@@ -84,7 +91,7 @@ void UTriggerComponent::FireOnCameraOverlappingEvent(float DeltaTime)
 	{
 		bIsCameraOverlapping = false;
 
-		FTriggerableParams CameraOverlappParams(ETriggerActionEnum::TAE_CameraStopOverlap);
+		FTriggerableParams CameraOverlappParams(ETriggerActionEnum::TAE_CameraStopOverlapp);
 		FireLambda(CameraOverlappParams);
 	}
 }

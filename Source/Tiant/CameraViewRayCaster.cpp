@@ -6,6 +6,7 @@
 #include "Engine.h"
 #include "Camera/CameraComponent.h"
 #include "Tiant/ViewRayCastHitable.h"
+#include "TriggerComponent.h"
 
 #define OUT
 #define DEBUG ()
@@ -49,8 +50,13 @@ void UCameraViewRayCaster::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 		FHitResult HitResult;
 		GetWorld()->LineTraceSingleByObjectType(OUT HitResult, ViewInfo.Location, ViewInfo.Location + ViewInfo.Rotation.Vector() * RayCastRange, FCollisionObjectQueryParams(CollisionParameters));
-		if (AActor* HitActor = GetValidActorByHitResult(HitResult)) {
-			HitActor->SetActorLocation(HitActor->GetActorLocation() + FVector(0.f, 0.f, 1.f));
+		AActor* HitActor = GetValidActorByHitResult(HitResult);
+		if (!HitActor) return;
+		
+		if (UTriggerComponent* TriggerComp = HitActor->FindComponentByClass<UTriggerComponent>()) {
+			FTriggerableParams ViewCastParams(ETriggerActionEnum::TAE_ViewRayCastHit);
+			ViewCastParams.Actors[0] = HitActor;
+			TriggerComp->FireLambda(ViewCastParams);
 		}
 	}
 }
@@ -62,7 +68,7 @@ uint16 UCameraViewRayCaster::GetMaxReflections() const {
 AActor* UCameraViewRayCaster::GetValidActorByHitResult(FHitResult& HitResult, uint16 ReflectionDepth) const
 {
 	// If an Actor is found && found Actor has RayCastHitable-Component && Distance <= Component-Distance
-	if (HitResult.GetActor() && HitResult.GetActor()->FindComponentByClass<UViewRayCastHitable>() && HitResult.GetActor()->FindComponentByClass<UViewRayCastHitable>()->GetHitRange() >= HitResult.Distance) {
+	if (HitResult.GetActor() && HitResult.GetActor()->FindComponentByClass<UViewRayCastHitable>()) {
 			if (HitResult.GetActor()->FindComponentByClass<UViewRayCastHitable>()->DoReflect()) {
 				if (ReflectionDepth >= GetMaxReflections()) {
 					return nullptr;

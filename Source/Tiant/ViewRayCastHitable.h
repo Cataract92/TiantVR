@@ -8,7 +8,7 @@
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class TIANT_API UViewRayCastHitable : public USceneComponent
+class TIANT_API UViewRayCastHitable : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -24,16 +24,11 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	float GetHitRange() const;
-
 	bool DoReflect() const;
 
 private:
 
 	UPROPERTY(EditAnywhere)
 	bool bDoReflect = false;
-
-	UPROPERTY(EditAnywhere)
-	float HitRange = 10000.f;
 	
 };

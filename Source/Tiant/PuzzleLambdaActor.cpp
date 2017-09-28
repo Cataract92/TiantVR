@@ -39,7 +39,11 @@ void APuzzleLambdaActor::BeginPlay()
 		else
 			AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Not Failed");
 	});
-
+	
+	AddLambdaDefinition(ELambdaEnum::LE_Scene1_RaiseTable, [](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams &Params)
+	{
+		TriggeredActor->SetActorLocation(TriggeredActor->GetActorLocation() + FVector(0, 0, 0.1));
+	});
 
 
 }

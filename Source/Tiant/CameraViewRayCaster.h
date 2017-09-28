@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "CollisionQueryParams.h"
 #include "CameraViewRayCaster.generated.h"
 
 

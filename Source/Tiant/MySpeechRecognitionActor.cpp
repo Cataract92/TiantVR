@@ -3,6 +3,7 @@
 #include "MySpeechRecognitionActor.h"
 
 #define AddDynamic( UserObject, FuncName ) __Internal_AddDynamic( UserObject, FuncName, STATIC_FUNCTION_FNAME( TEXT( #FuncName ) ) )
+
 // Sets default values
 AMySpeechRecognitionActor::AMySpeechRecognitionActor()
 {
@@ -27,8 +28,10 @@ void AMySpeechRecognitionActor::BeginPlay()
 		SetConfigParam("-beam", ESpeechRecognitionParamType::VE_FLOAT, "1e-60");
 
 		TArray<FRecognitionPhrase> wordList;
-		wordList.Add(FRecognitionPhrase(FString("reset"), EPhraseRecognitionTolerance::VE_3));
-		wordList.Add(FRecognitionPhrase(FString("go there"), EPhraseRecognitionTolerance::VE_5));
+		for (FCustomPhraseStruct Phrase : Phrases)
+		{
+			wordList.Add(FRecognitionPhrase(Phrase.Phrase, Phrase.Tolerance));
+		}
 		EnableKeywordMode(wordList);
 		AGlobalDatabaseActor* DBActor = AGlobalDatabaseActor::GetInstance();
 			
@@ -57,10 +60,51 @@ void AMySpeechRecognitionActor::OnWordSpoken(FRecognisedPhrases phrases)
 	FString phrase;
 	for (auto& phrase : phraseArray)
 	{
-		//AGlobalDatabaseActor::GetInstance()->PrintDebugMessage(phrase);
+		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Reg Phrase: "+phrase);
+
+		if (phrase.Equals("there"))
+		{
+			UCameraComponent* Camera = GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UCameraComponent>();
+
+			if (Camera)
+			{
+				FMinimalViewInfo ViewInfo;
+				Camera->GetCameraView(GetWorld()->GetDeltaSeconds(), OUT ViewInfo);
+
+				FHitResult HitResult;
+				GetWorld()->LineTraceSingleByObjectType(OUT HitResult, ViewInfo.Location, ViewInfo.Location + ViewInfo.Rotation.Vector() * 10000, FCollisionObjectQueryParams());
+				FVector HitLocation = HitResult.Location;
+
+				ATiantCharacter* TiantCharacter = AGlobalDatabaseActor::GetTiant();
+				AAIController* Controller = Cast<AAIController>(TiantCharacter->GetController());
+
+				EPathFollowingRequestResult::Type Result = Controller->MoveToLocation(HitLocation);
+
+				if (Result == EPathFollowingRequestResult::Type::Failed)
+					AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Failed");
+				else
+					AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Not Failed");
+			}
+		}
 	}
 }
 
 void AMySpeechRecognitionActor::OnUnregPhrase() {
-	//AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Unreg Phrase");
+	AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Unreg Phrase");
+}
+
+AMySpeechRecognitionActor* AMySpeechRecognitionActor::GetInstance()
+{
+	// Prevents Nullptrexception in Iterator if this is called before or while Gameinitializaion
+	if (!GEngine->GameViewport->GetWorld()) return nullptr;
+
+	// Iterate through all GlobalDatabaseActors and return the first one found
+	// (only one should exist)
+	for (TActorIterator<AMySpeechRecognitionActor> ActorItr(GEngine->GameViewport->GetWorld()); ActorItr; ++ActorItr)
+	{
+		return *ActorItr;
+	}
+
+	// If no GDActor is found return null
+	return nullptr;
 }

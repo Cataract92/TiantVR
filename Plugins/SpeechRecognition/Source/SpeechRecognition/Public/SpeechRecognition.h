@@ -66,11 +66,11 @@ struct FRecognitionPhrase
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(BlueprintReadWrite)
-		FString phrase;
+	UPROPERTY(EditAnywhere)
+	FString phrase;
 
-	UPROPERTY(BlueprintReadWrite)
-		EPhraseRecognitionTolerance tolerance;
+	UPROPERTY(EditAnywhere)
+	EPhraseRecognitionTolerance tolerance;
 
 	// default constructor
 	FRecognitionPhrase() {

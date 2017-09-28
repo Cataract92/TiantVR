@@ -25,8 +25,13 @@ private:
 	UPROPERTY(EditAnywhere)
 	FTriggerableParams Parameter;
 
+
 	UPROPERTY(EditAnywhere)
+	bool bDontUsePlayerPawn;
+
+	UPROPERTY(EditAnywhere, meta = (EditCondition = bDontUsePlayerPawn))
 	AActor* TriggeringActor;
+
 
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<ETriggerActionEnum> TriggeringAction;
