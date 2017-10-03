@@ -15,6 +15,7 @@ enum ETriggerActionEnum
 	TAE_CameraStopOverlapp UMETA(DisplayName = "Camera Stop Overlapping"),
 	TAE_CameraIsOverlapping UMETA(DisplayName = "Camera Is Overlapping"),
 	TAE_OnTick UMETA(DisplayName = "On Tick"),
+	TAE_OnTiantInteraction UMETA(DisplayName = "On Tiant Interaction"),
 	TAE_ViewRayCastHit UMETA(DisplayName = "On View-RayCast Hit"),	TAE_NotSet UMETA(DisplayName = "Not Set | Do not use")
 };
 
@@ -23,6 +24,7 @@ enum ELambdaEnum
 {
 	LE_Scene1_RotateMirror UMETA(DisplayName = "Scene 1 | Rotate Mirror"),
 	LE_Scene1_RaiseTable UMETA(DisplayName = "Scene 1 | Raise Table"),
+	LE_Scene1_PressButton UMETA(DisplayName = "Scene 1 | Press Button"),
 	LE_Scene1_DoNothing UMETA(DisplayName = "Scene 1 | DoNothing")
 };
 
@@ -87,10 +89,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;	
 
+	UFUNCTION(BlueprintCallable)
 	virtual void FireLambda(AActor* TriggeringActor, FTriggerableParams& Params);
 
 	virtual void RegisterLambda(AActor* TriggeringActor, AActor* TriggeredActor, ETriggerActionEnum TriggerAction);
 
+	UFUNCTION(BlueprintCallable)
 	static APuzzleLambdaActor* GetInstance();
 
 private:

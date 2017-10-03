@@ -36,8 +36,7 @@ void APuzzleLambdaActor::BeginPlay()
 
 		if (Result == EPathFollowingRequestResult::Type::Failed)
 			AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Failed");
-		else
-			AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Not Failed");
+
 	});
 	
 	AddLambdaDefinition(ELambdaEnum::LE_Scene1_RaiseTable, [](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams &Params)
@@ -45,7 +44,10 @@ void APuzzleLambdaActor::BeginPlay()
 		TriggeredActor->SetActorLocation(TriggeredActor->GetActorLocation() + FVector(0, 0, 0.1));
 	});
 
-
+	AddLambdaDefinition(ELambdaEnum::LE_Scene1_PressButton, [](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams &Params)
+	{
+		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Interacted");
+	});
 }
 
 // Called every frame

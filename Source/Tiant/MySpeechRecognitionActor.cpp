@@ -1,6 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MySpeechRecognitionActor.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "TriggerableComponent.h"
+
 
 #define AddDynamic( UserObject, FuncName ) __Internal_AddDynamic( UserObject, FuncName, STATIC_FUNCTION_FNAME( TEXT( #FuncName ) ) )
 
@@ -84,6 +88,24 @@ void AMySpeechRecognitionActor::OnWordSpoken(FRecognisedPhrases phrases)
 					AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Failed");
 				else
 					AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Not Failed");
+			}
+		}
+		else if (phrase.Equals("use"))
+		{
+			UCameraComponent* Camera = GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UCameraComponent>();
+
+			if (Camera)
+			{
+				FMinimalViewInfo ViewInfo;
+				Camera->GetCameraView(GetWorld()->GetDeltaSeconds(), OUT ViewInfo);
+
+				FHitResult HitResult;
+				GetWorld()->LineTraceSingleByObjectType(OUT HitResult, ViewInfo.Location, ViewInfo.Location + ViewInfo.Rotation.Vector() * 10000, FCollisionObjectQueryParams());
+			
+				if (!HitResult.GetActor() || !HitResult.GetActor()->FindComponentByClass<UTriggerableComponent>())
+					return;
+
+				AGlobalDatabaseActor::GetTiant()->OrderUse(HitResult.GetActor());
 			}
 		}
 	}

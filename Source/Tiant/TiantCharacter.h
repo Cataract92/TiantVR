@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
 #include "TiantCharacter.generated.h"
 
 UCLASS()
@@ -25,4 +26,13 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void OrderUse(AActor* Target);
+
+private:
+
+	UPROPERTY(EditAnywhere)
+	UBehaviorTree* BehaviorTree;
+
+	UBlackboardComponent* BlackboardComponent;
 };
