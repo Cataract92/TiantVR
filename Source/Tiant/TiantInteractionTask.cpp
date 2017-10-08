@@ -39,7 +39,6 @@ EBTNodeResult::Type UTiantInteractionTask::ExecuteTask(UBehaviorTreeComponent& O
 	else
 		return EBTNodeResult::InProgress;
 
-	
 }
 
 void UTiantInteractionTask::OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTNodeResult::Type TaskResult)
@@ -54,7 +53,6 @@ void UTiantInteractionTask::OnTaskFinished(UBehaviorTreeComponent& OwnerComp, ui
 
 	APuzzleLambdaActor* PuzzleLambdaActor = APuzzleLambdaActor::GetInstance();
 	FTriggerableParams Params(ETriggerActionEnum::TAE_OnTiantInteraction);
-	AActor* Target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("Target"));
 	PuzzleLambdaActor->FireLambda(AGlobalDatabaseActor::GetTiant(), Params);
 }
 

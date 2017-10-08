@@ -83,11 +83,6 @@ void AMySpeechRecognitionActor::OnWordSpoken(FRecognisedPhrases phrases)
 				AAIController* Controller = Cast<AAIController>(TiantCharacter->GetController());
 
 				EPathFollowingRequestResult::Type Result = Controller->MoveToLocation(HitLocation);
-
-				if (Result == EPathFollowingRequestResult::Type::Failed)
-					AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Failed");
-				else
-					AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Not Failed");
 			}
 		}
 		else if (phrase.Equals("use"))
@@ -112,7 +107,7 @@ void AMySpeechRecognitionActor::OnWordSpoken(FRecognisedPhrases phrases)
 }
 
 void AMySpeechRecognitionActor::OnUnregPhrase() {
-	AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Unreg Phrase");
+	//AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Unreg Phrase");
 }
 
 AMySpeechRecognitionActor* AMySpeechRecognitionActor::GetInstance()

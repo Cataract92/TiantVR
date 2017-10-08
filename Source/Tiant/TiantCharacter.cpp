@@ -45,8 +45,6 @@ void ATiantCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 void ATiantCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	
-	AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Possess");
 
 	BehaviorTree->BlackboardAsset = NewObject<UBlackboardData>();
 	BehaviorTree->BlackboardAsset->UpdatePersistentKey<UBlackboardKeyType_Object>(FName("Target"));
