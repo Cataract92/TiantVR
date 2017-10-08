@@ -29,10 +29,12 @@ public:
 
 	void OrderUse(AActor* Target);
 
+	void PossessedBy(AController* NewController) override;
+
 private:
 
 	UPROPERTY(EditAnywhere)
 	UBehaviorTree* BehaviorTree;
-
+	UBehaviorTreeComponent* BehaviorTreeComponent;
 	UBlackboardComponent* BlackboardComponent;
 };

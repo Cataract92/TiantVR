@@ -3,10 +3,10 @@
 #include "TiantCharacter.h"
 #include "AIController.h"
 #include "Engine/Engine.h"
-#include "Runtime/ActorSequence/Private/ActorSequencePrivatePCH.h"
 #include <BehaviorTree/BehaviorTree.h>
 #include <BehaviorTree/BlackboardComponent.h>
 #include "GlobalDatabaseActor.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 
 
 // Sets default values
@@ -15,7 +15,11 @@ ATiantCharacter::ATiantCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	BlackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BehaviorComponent"));
+	//BehaviorTree->BlackboardAsset = NewObject<UBlackboardData>();
+	//BehaviorTree->BlackboardAsset->UpdatePersistentKey<UBlackboardKeyType_Object>(FName("Target"));
+
+	BlackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComponent"));
+	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComponent"));
 }
 
 // Called when the game starts or when spawned
@@ -38,19 +42,22 @@ void ATiantCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 }
 
+void ATiantCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	
+	AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Possess");
+
+	BehaviorTree->BlackboardAsset = NewObject<UBlackboardData>();
+	BehaviorTree->BlackboardAsset->UpdatePersistentKey<UBlackboardKeyType_Object>(FName("Target"));
+}
+
 void ATiantCharacter::OrderUse(AActor* Target)
 {
-	AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("UseOrder");
-
 	AAIController* Controller = Cast<AAIController>(this->GetController());
 
 	BlackboardComponent->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
-	AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("InitBlackboard");
 	BlackboardComponent->SetValueAsObject("Target", Target);
-	AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Set Target");
-	BlackboardComponent->SetValueAsVector("TargetVector", Target->GetActorLocation());
-	AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("SetTargetVector");
 
-	Controller->RunBehaviorTree(BehaviorTree);
-	AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("RanBehavior");
+	BehaviorTreeComponent->StartTree(*BehaviorTree);
 }

@@ -24,4 +24,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	float Distance = 5.f;
 
+private:
+	FVector BoundMin, BoundMax;
+
 };
