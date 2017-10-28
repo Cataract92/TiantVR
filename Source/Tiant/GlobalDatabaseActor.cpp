@@ -22,17 +22,23 @@ void AGlobalDatabaseActor::BeginPlay()
 void AGlobalDatabaseActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	//AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Tick");
-
 }
+
+int count = 0;
 
 void AGlobalDatabaseActor::PrintDebugMessage(FString Message)
 {
+	if (count++ >= 100)
+	{
+		count = 0;
+		TextRenderer->GetTextRender()->SetText(FText::FromString(Message));
+	}
+
 	// Check is important due the use of Singleton, which could return nullptr
 	// and to check if TextRenderer is not null
 	if (this != nullptr && TextRenderer)
 		TextRenderer->GetTextRender()->SetText(FText::FromString(TextRenderer->GetTextRender()->Text.ToString() + "\n" + Message));
+
 }
 
 ATextRenderActor* AGlobalDatabaseActor::GetTextRenderer()

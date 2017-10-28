@@ -7,9 +7,8 @@
 
 #define OUT
 
-bool AVRTriggerVolume::IsOverlappingCamera(float DeltaTime, UCameraComponent* Camera) {
-	
-	
+bool AVRTriggerVolume::IsOverlappingCamera(float DeltaTime, UCameraComponent* Camera) const
+{
 	if (!Camera) return false;
 
 	FMinimalViewInfo ViewInfo;
@@ -19,14 +18,11 @@ bool AVRTriggerVolume::IsOverlappingCamera(float DeltaTime, UCameraComponent* Ca
 	FVector Min = GetComponentsBoundingBox().Min;
 	FVector Max = GetComponentsBoundingBox().Max;
 
-	if (IsBeetweenPoints(Min.X, CameraLocation.X, Max.X) && IsBeetweenPoints(Min.Y, CameraLocation.Y, Max.Y) && IsBeetweenPoints(Min.Z, CameraLocation.Z, Max.Z)) {
-		return true;
-	}
-	
-	return false;
+	return IsBeetweenPoints(Min.X, CameraLocation.X, Max.X) && IsBeetweenPoints(Min.Y, CameraLocation.Y, Max.Y) && IsBeetweenPoints(Min.Z, CameraLocation.Z, Max.Z);
 }
 
-bool AVRTriggerVolume::IsBeetweenPoints(float MinX, float MidX, float MaxX) const {
-	return ( (MinX < MidX && MidX < MaxX) || (MinX > MidX && MidX > MaxX));
+bool AVRTriggerVolume::IsBeetweenPoints(float MinX, float MidX, float MaxX)
+{
+	return  MinX < MidX && MidX < MaxX || MinX > MidX && MidX > MaxX;
 }
 

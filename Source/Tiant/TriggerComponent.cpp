@@ -56,17 +56,26 @@ void UTriggerComponent::FireOnCameraOverlappingEvent(float DeltaTime)
 	TArray<AActor*> AttachedActors;
 	GetOwner()->GetAttachedActors(OUT AttachedActors);
 
-	bool bIsCameraOverlappingCheck = false;
+	TArray<AVRTriggerVolume*> TriggerVolumes;
 
 	for (TArray<AActor*>::TConstIterator ActorItr(AttachedActors); ActorItr; ++ActorItr)
 	{
 		if ((*ActorItr)->IsA(AVRTriggerVolume::StaticClass()))
 		{
-			UCameraComponent* Cam = static_cast<UCameraComponent*>(GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UCameraComponent>());
-
-			bIsCameraOverlappingCheck = static_cast<AVRTriggerVolume*>(*ActorItr)->IsOverlappingCamera(DeltaTime, Cam);
-			break;
+			TriggerVolumes.Add(Cast<AVRTriggerVolume>(*ActorItr));
 		}
+	}
+
+	if (TriggerVolumes.Num() == 0) return;
+
+	bool bIsCameraOverlappingCheck = false;
+
+	UCameraComponent* Cam = Cast<UCameraComponent>(GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UCameraComponent>());
+
+	for (TArray<AVRTriggerVolume*>::TConstIterator ActorItr(TriggerVolumes); ActorItr; ++ActorItr)
+	{
+		bIsCameraOverlappingCheck = (*ActorItr)->IsOverlappingCamera(DeltaTime, Cam);
+		break;
 	}
 
 	if (bIsCameraOverlappingCheck)

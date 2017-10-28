@@ -26,7 +26,6 @@ ATiantCharacter::ATiantCharacter()
 void ATiantCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 // Called every frame
@@ -48,14 +47,14 @@ void ATiantCharacter::PossessedBy(AController* NewController)
 
 	BehaviorTree->BlackboardAsset = NewObject<UBlackboardData>();
 	BehaviorTree->BlackboardAsset->UpdatePersistentKey<UBlackboardKeyType_Object>(FName("Target"));
+
+	BlackboardComponent->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 }
 
 void ATiantCharacter::OrderUse(AActor* Target)
 {
 	AAIController* Controller = Cast<AAIController>(this->GetController());
 
-	BlackboardComponent->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 	BlackboardComponent->SetValueAsObject("Target", Target);
-
 	BehaviorTreeComponent->StartTree(*BehaviorTree);
 }

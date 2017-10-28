@@ -28,7 +28,6 @@ void APuzzleLambdaActor::BeginPlay()
 
 	AddLambdaDefinition(ELambdaEnum::LE_Scene1_DoNothing, [](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params)
 	{
-		
 		ATiantCharacter* TiantCharacter = AGlobalDatabaseActor::GetTiant();
 		AAIController* Controller = Cast<AAIController>(TiantCharacter->GetController());
 

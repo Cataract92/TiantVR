@@ -1,5 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#define OUT 
+
 #include "TiantInteractionTask.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "AIController.h"
@@ -32,7 +34,7 @@ EBTNodeResult::Type UTiantInteractionTask::ExecuteTask(UBehaviorTreeComponent& O
 
 	EPathFollowingRequestResult::Type Result = Controller->MoveToLocation(Location);
 
-	Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("Target"))->FindComponentByClass<UStaticMeshComponent>()->GetLocalBounds(BoundMin, BoundMax);
+	Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("Target"))->FindComponentByClass<UStaticMeshComponent>()->GetLocalBounds(OUT BoundMin, OUT BoundMax);
 
 	if (Result == EPathFollowingRequestResult::Type::Failed)
 		return EBTNodeResult::Failed;

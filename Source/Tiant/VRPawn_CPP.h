@@ -27,10 +27,20 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY(EditAnywhere)
+	int16 HeadRollTolerance;
+
+	UPROPERTY(EditAnywhere)
+	int16 HeadTiltTolerance;
+
+
 private:
 
 	void Pressed();
 
 	void Released();
 	
+	FVector HeadPosition, EyePosition, ChestPosition, HipPosition;
+
+	void CalculatePositions(float DeltaTime);
 };
