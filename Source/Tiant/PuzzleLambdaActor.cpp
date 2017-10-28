@@ -28,7 +28,7 @@ void APuzzleLambdaActor::BeginPlay()
 
 	AddLambdaDefinition(ELambdaEnum::LE_Scene1_DoNothing, [](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params)
 	{
-		ATiantCharacter* TiantCharacter = AGlobalDatabaseActor::GetTiant();
+		ATiantCharacter* TiantCharacter = AGlobalDatabaseActor::GetInstance()->GetTiant();
 		AAIController* Controller = Cast<AAIController>(TiantCharacter->GetController());
 
 		EPathFollowingRequestResult::Type Result = Controller->MoveToLocation(FVector(-310, -270, 0));
@@ -46,6 +46,8 @@ void APuzzleLambdaActor::BeginPlay()
 	AddLambdaDefinition(ELambdaEnum::LE_Scene1_PressButton, [](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams &Params)
 	{
 		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Interacted");
+		FVector PawnLocation = AGlobalDatabaseActor::GetInstance()->GetTiant()->GetActorLocation();
+		AGlobalDatabaseActor::GetInstance()->PlaySoundAtLocation(PawnLocation, "Content/Tiant/VoiceFiles/HalloMeinNameIstTiant.wav");
 	});
 }
 

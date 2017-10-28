@@ -8,7 +8,9 @@
 #include "Runtime/Engine/Classes/Engine/TextRenderActor.h"
 #include "EngineUtils.h"
 #include "TiantCharacter.h"
+#include "RunebergVR_Gestures_Database.h"
 #include "GlobalDatabaseActor.generated.h"
+
 
 UCLASS()
 class TIANT_API AGlobalDatabaseActor : public AActor
@@ -29,13 +31,20 @@ public:
 
 	virtual void PrintDebugMessage(FString Message);
 
-	ATextRenderActor* GetTextRenderer();
+	ATextRenderActor* GetTextRenderer() const;
+	URunebergVR_Gestures_Database* GetGestureDatabase() const;
+	void PlaySoundAtLocation(FVector Location, const FString& AudioFile) const;
+	ATiantCharacter* GetTiant();
 
 	static AGlobalDatabaseActor* GetInstance();
-
-	static ATiantCharacter* GetTiant();
 
 private:
 	UPROPERTY(EditAnywhere)
 	ATextRenderActor* TextRenderer;
+
+	URunebergVR_Gestures_Database* GesturesDatabase;
+
+	UAudioComponent* AudioComponent;
+
+	USoundWave* GetSoundWaveFromFile(const FString& filePath) const;
 };

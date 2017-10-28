@@ -79,7 +79,7 @@ void AMySpeechRecognitionActor::OnWordSpoken(FRecognisedPhrases phrases)
 				GetWorld()->LineTraceSingleByObjectType(OUT HitResult, ViewInfo.Location, ViewInfo.Location + ViewInfo.Rotation.Vector() * 10000, FCollisionObjectQueryParams());
 				FVector HitLocation = HitResult.Location;
 
-				ATiantCharacter* TiantCharacter = AGlobalDatabaseActor::GetTiant();
+				ATiantCharacter* TiantCharacter = AGlobalDatabaseActor::GetInstance()->GetTiant();
 				AAIController* Controller = Cast<AAIController>(TiantCharacter->GetController());
 
 				EPathFollowingRequestResult::Type Result = Controller->MoveToLocation(HitLocation);
@@ -100,7 +100,7 @@ void AMySpeechRecognitionActor::OnWordSpoken(FRecognisedPhrases phrases)
 				if (!HitResult.GetActor() || !HitResult.GetActor()->FindComponentByClass<UTriggerableComponent>())
 					return;
 
-				AGlobalDatabaseActor::GetTiant()->OrderUse(HitResult.GetActor());
+				AGlobalDatabaseActor::GetInstance()->GetTiant()->OrderUse(HitResult.GetActor());
 			}
 		}
 	}

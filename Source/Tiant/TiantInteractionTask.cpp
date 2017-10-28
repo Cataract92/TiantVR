@@ -55,7 +55,7 @@ void UTiantInteractionTask::OnTaskFinished(UBehaviorTreeComponent& OwnerComp, ui
 
 	APuzzleLambdaActor* PuzzleLambdaActor = APuzzleLambdaActor::GetInstance();
 	FTriggerableParams Params(ETriggerActionEnum::TAE_OnTiantInteraction);
-	PuzzleLambdaActor->FireLambda(AGlobalDatabaseActor::GetTiant(), Params);
+	PuzzleLambdaActor->FireLambda(AGlobalDatabaseActor::GetInstance()->GetTiant(), Params);
 }
 
 void UTiantInteractionTask::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
