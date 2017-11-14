@@ -21,6 +21,8 @@ void UTriggerableComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	Parameter.TriggeredActor = GetOwner();
+
 	if (bDontUsePlayerPawn)
 		APuzzleLambdaActor::GetInstance()->RegisterLambda(TriggeringActor, GetOwner(), TriggeringAction);
 	else 
@@ -49,5 +51,15 @@ ELambdaEnum UTriggerableComponent::GetLambdaEnum()
 FTriggerableParams& UTriggerableComponent::GetPredefinedParameters()
 {
 	return Parameter;
+}
+
+void UTriggerableComponent::Enable(bool Enable)
+{
+	this->bEnable = Enable;
+}
+
+bool UTriggerableComponent::IsEnabled()
+{
+	return this->bEnable;
 }
 

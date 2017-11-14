@@ -3,6 +3,7 @@
 #include "PuzzleLambdaActor.h"
 #include "TriggerableComponent.h"
 #include "AIController.h"
+#include "MySpeechRecognitionActor.h"
 
 // Sets default values
 APuzzleLambdaActor::APuzzleLambdaActor()
@@ -17,6 +18,7 @@ void APuzzleLambdaActor::BeginPlay()
 {
 	Super::BeginPlay();
 
+	/*
 	AddLambdaDefinition(ELambdaEnum::LE_Scene1_RotateMirror, [](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params) {
 		
 		if (Params.Vectors.Num() == 0)
@@ -25,29 +27,45 @@ void APuzzleLambdaActor::BeginPlay()
 		}
 		TriggeredActor->SetActorRotation(FRotator(Params.Vectors[0].X, Params.Vectors[0].Y, Params.Vectors[0].Z));
 	});
+	*/
 
-	AddLambdaDefinition(ELambdaEnum::LE_Scene1_DoNothing, [](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params)
+	/*
+	 * TriggeredActor: The Wall which starts this event
+	 * Actor[0]: The Sphere, which gets enabled to enable next puzzle
+	 * Vector[0]: Location for Tiant-MoveOrder
+	 */
+	AddLambdaDefinition(ELambdaEnum::LE_Scene1_InitTiant, [this](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params)
 	{
+		// Disable this Trigger, so it just happens once.
+		Cast<UTriggerableComponent>(TriggeredActor->GetComponentByClass(UTriggerableComponent::StaticClass()))->Enable(false);
+		
+
 		ATiantCharacter* TiantCharacter = AGlobalDatabaseActor::GetInstance()->GetTiant();
 		AAIController* Controller = Cast<AAIController>(TiantCharacter->GetController());
 
-		EPathFollowingRequestResult::Type Result = Controller->MoveToLocation(FVector(-310, -270, 0));
+		EPathFollowingRequestResult::Type Result = Controller->MoveToLocation(Params.Vectors[0]);
 
-		if (Result == EPathFollowingRequestResult::Type::Failed)
-			AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Failed");
-
+		FTimerHandle TimerHandle;
+		GetWorldTimerManager().SetTimer(OUT TimerHandle, [Params]()
+		{
+			Cast<UTriggerableComponent>(Params.Actors[0]->GetComponentByClass(UTriggerableComponent::StaticClass()))->Enable(true);
+		} , 8.f, false);
+		
+		
 	});
-	
-	AddLambdaDefinition(ELambdaEnum::LE_Scene1_RaiseTable, [](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams &Params)
-	{
-		TriggeredActor->SetActorLocation(TriggeredActor->GetActorLocation() + FVector(0, 0, 0.1));
-	});
 
-	AddLambdaDefinition(ELambdaEnum::LE_Scene1_PressButton, [](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams &Params)
+	/*
+	 * TriggeringActor: Sphere
+	 * TriggeredActor: Wall to Move
+	 */
+	AddLambdaDefinition(ELambdaEnum::LE_Scene1_MoveWall, [this](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params)
 	{
-		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Interacted");
-		FVector PawnLocation = AGlobalDatabaseActor::GetInstance()->GetTiant()->GetActorLocation();
-		AGlobalDatabaseActor::GetInstance()->PlaySoundAtLocation(PawnLocation, "Content/Tiant/VoiceFiles/HalloMeinNameIstTiant.wav");
+		// Disable this Trigger, so it just happens once.
+		Cast<UTriggerableComponent>(TriggeredActor->GetComponentByClass(UTriggerableComponent::StaticClass()))->Enable(false);
+
+		Params.Actors[0]->SetActorLocation(Params.Actors[0]->GetActorLocation() + Params.Vectors[0]);
+
+		AMySpeechRecognitionActor::GetInstance()->EnablePhrase("there",true);
 	});
 }
 
@@ -87,7 +105,7 @@ void APuzzleLambdaActor::FireLambda(AActor* TriggeringActor,FTriggerableParams& 
 		for (TArray<UActorComponent*>::TConstIterator IterComp(Components); IterComp; ++IterComp) {
 			UTriggerableComponent* Component = static_cast<UTriggerableComponent*>(*IterComp);
 			
-			if (Component->GetTriggeringAction() != Params.TriggerAction) continue;
+			if (Component->GetTriggeringAction() != Params.TriggerAction || !Component->IsEnabled() || (Params.TriggeredActor != nullptr && Params.TriggeredActor != Component->GetPredefinedParameters().TriggeredActor)) continue;
 
 			FTriggerableParams::SetParameter(Params, Component->GetPredefinedParameters());
 

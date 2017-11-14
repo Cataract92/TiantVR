@@ -19,10 +19,14 @@ struct FCustomPhraseStruct
 public:
 
 	UPROPERTY(EditAnywhere)
+	bool bEnable = false;
+
+	UPROPERTY(EditAnywhere)
 	FString Phrase;
 
 	UPROPERTY(EditAnywhere)
 	EPhraseRecognitionTolerance Tolerance;
+
 };
 
 
@@ -31,7 +35,8 @@ class TIANT_API AMySpeechRecognitionActor : public ASpeechRecognitionActor
 {
 	GENERATED_BODY()
 	
-public:	
+public:
+	void EnablePhrase(FString Phrase, bool bDoEnable);
 	// Sets default values for this actor's properties
 	AMySpeechRecognitionActor();
 
@@ -47,7 +52,7 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
 
 	UFUNCTION()
-	void OnWordSpoken(FRecognisedPhrases phrases);
+	void OnWordSpoken(FRecognisedPhrases Phrases);
 
 	UFUNCTION()
 	void OnUnregPhrase();
@@ -56,6 +61,10 @@ public:
 
 private:
 
+	void ProcessPhrase(FString Phrase);
+
 	UPROPERTY(EditAnywhere)
 	TArray<FCustomPhraseStruct> Phrases;
+
+	TMap<FString, FCustomPhraseStruct> PhrasesMap;
 };

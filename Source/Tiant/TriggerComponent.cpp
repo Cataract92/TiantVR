@@ -34,7 +34,6 @@ void UTriggerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 	//CameraOverlappingEvent
 	FireOnCameraOverlappingEvent(DeltaTime);
-
 }
 
 void UTriggerComponent::FireLambda(FTriggerableParams& Params )

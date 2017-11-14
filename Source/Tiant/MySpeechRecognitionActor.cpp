@@ -8,6 +8,52 @@
 
 #define AddDynamic( UserObject, FuncName ) __Internal_AddDynamic( UserObject, FuncName, STATIC_FUNCTION_FNAME( TEXT( #FuncName ) ) )
 
+void AMySpeechRecognitionActor::ProcessPhrase(FString Phrase)
+{
+	if (Phrase.Equals("there") && PhrasesMap["there"].bEnable)
+	{
+		UCameraComponent* Camera = GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UCameraComponent>();
+
+		if (Camera)
+		{
+			FMinimalViewInfo ViewInfo;
+			Camera->GetCameraView(GetWorld()->GetDeltaSeconds(), OUT ViewInfo);
+
+			FHitResult HitResult;
+			GetWorld()->LineTraceSingleByObjectType(OUT HitResult, ViewInfo.Location, ViewInfo.Location + ViewInfo.Rotation.Vector() * 10000, FCollisionObjectQueryParams());
+			FVector HitLocation = HitResult.Location;
+
+			ATiantCharacter* TiantCharacter = AGlobalDatabaseActor::GetInstance()->GetTiant();
+			AAIController* Controller = Cast<AAIController>(TiantCharacter->GetController());
+
+			EPathFollowingRequestResult::Type Result = Controller->MoveToLocation(HitLocation);
+		}
+	}
+	else if (Phrase.Equals("use") && PhrasesMap["use"].bEnable)
+	{
+		UCameraComponent* Camera = GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UCameraComponent>();
+
+		if (Camera)
+		{
+			FMinimalViewInfo ViewInfo;
+			Camera->GetCameraView(GetWorld()->GetDeltaSeconds(), OUT ViewInfo);
+
+			FHitResult HitResult;
+			GetWorld()->LineTraceSingleByObjectType(OUT HitResult, ViewInfo.Location, ViewInfo.Location + ViewInfo.Rotation.Vector() * 10000, FCollisionObjectQueryParams());
+
+			if (!HitResult.GetActor() || !HitResult.GetActor()->FindComponentByClass<UTriggerableComponent>())
+				return;
+
+			AGlobalDatabaseActor::GetInstance()->GetTiant()->OrderUse(HitResult.GetActor());
+		}
+	}
+}
+
+void AMySpeechRecognitionActor::EnablePhrase(FString Phrase, bool bDoEnable)
+{
+	PhrasesMap[Phrase].bEnable = bDoEnable;
+}
+
 // Sets default values
 AMySpeechRecognitionActor::AMySpeechRecognitionActor()
 {
@@ -35,11 +81,9 @@ void AMySpeechRecognitionActor::BeginPlay()
 		for (FCustomPhraseStruct Phrase : Phrases)
 		{
 			wordList.Add(FRecognitionPhrase(Phrase.Phrase, Phrase.Tolerance));
+			PhrasesMap.Add(Phrase.Phrase, Phrase);
 		}
 		EnableKeywordMode(wordList);
-		AGlobalDatabaseActor* DBActor = AGlobalDatabaseActor::GetInstance();
-			
-		DBActor->PrintDebugMessage("ASpeechRecogTestActor:Init success");
 	} else {
 		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("ASpeechRecogTestActor:Init failed");
 	}
@@ -58,51 +102,15 @@ void AMySpeechRecognitionActor::EndPlay(const EEndPlayReason::Type EndPlayReason
 	Shutdown();
 }
 
-void AMySpeechRecognitionActor::OnWordSpoken(FRecognisedPhrases phrases)
+void AMySpeechRecognitionActor::OnWordSpoken(FRecognisedPhrases Phrases)
 {
-	TArray<FString> phraseArray = phrases.phrases;
-	FString phrase;
-	for (auto& phrase : phraseArray)
+	TArray<FString> PhraseArray = Phrases.phrases;
+	FString Phrase;
+	for (auto& Phrase : PhraseArray)
 	{
-		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Reg Phrase: "+phrase);
+		//AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Reg Phrase: "+ Phrase);
 
-		if (phrase.Equals("there"))
-		{
-			UCameraComponent* Camera = GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UCameraComponent>();
-
-			if (Camera)
-			{
-				FMinimalViewInfo ViewInfo;
-				Camera->GetCameraView(GetWorld()->GetDeltaSeconds(), OUT ViewInfo);
-
-				FHitResult HitResult;
-				GetWorld()->LineTraceSingleByObjectType(OUT HitResult, ViewInfo.Location, ViewInfo.Location + ViewInfo.Rotation.Vector() * 10000, FCollisionObjectQueryParams());
-				FVector HitLocation = HitResult.Location;
-
-				ATiantCharacter* TiantCharacter = AGlobalDatabaseActor::GetInstance()->GetTiant();
-				AAIController* Controller = Cast<AAIController>(TiantCharacter->GetController());
-
-				EPathFollowingRequestResult::Type Result = Controller->MoveToLocation(HitLocation);
-			}
-		}
-		else if (phrase.Equals("use"))
-		{
-			UCameraComponent* Camera = GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UCameraComponent>();
-
-			if (Camera)
-			{
-				FMinimalViewInfo ViewInfo;
-				Camera->GetCameraView(GetWorld()->GetDeltaSeconds(), OUT ViewInfo);
-
-				FHitResult HitResult;
-				GetWorld()->LineTraceSingleByObjectType(OUT HitResult, ViewInfo.Location, ViewInfo.Location + ViewInfo.Rotation.Vector() * 10000, FCollisionObjectQueryParams());
-			
-				if (!HitResult.GetActor() || !HitResult.GetActor()->FindComponentByClass<UTriggerableComponent>())
-					return;
-
-				AGlobalDatabaseActor::GetInstance()->GetTiant()->OrderUse(HitResult.GetActor());
-			}
-		}
+		ProcessPhrase(Phrase);
 	}
 }
 

@@ -32,6 +32,7 @@ void UCameraViewRayCaster::BeginPlay()
 	// Define CollisionParameters: PhsysicsBody for Interactables and WorlsStatic for Walls etc.
 	CollisionParameters.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
 	CollisionParameters.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+	CollisionParameters.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
 }
 
 
@@ -52,12 +53,16 @@ void UCameraViewRayCaster::TickComponent(float DeltaTime, ELevelTick TickType, F
 		GetWorld()->LineTraceSingleByObjectType(OUT HitResult, ViewInfo.Location, ViewInfo.Location + ViewInfo.Rotation.Vector() * RayCastRange, FCollisionObjectQueryParams(CollisionParameters));
 		AActor* HitActor = GetValidActorByHitResult(HitResult);
 		if (!HitActor) return;
-		
-		if (UTriggerComponent* TriggerComp = HitActor->FindComponentByClass<UTriggerComponent>()) {
+
+		if (UTriggerComponent* TriggerComp = PlayerPawn->FindComponentByClass<UTriggerComponent>()) {
 			FTriggerableParams ViewCastParams(ETriggerActionEnum::TAE_ViewRayCastHit);
-			ViewCastParams.Actors[0] = HitActor;
+			ViewCastParams.TriggeredActor = HitActor;
 			TriggerComp->FireLambda(ViewCastParams);
 		}
+
+	} else
+	{
+		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("No Cam");
 	}
 }
 

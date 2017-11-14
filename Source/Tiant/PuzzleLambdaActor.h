@@ -14,6 +14,9 @@ enum ETriggerActionEnum
 	TAE_CameraStartOverlapp UMETA(DisplayName = "Camera Start Overlapping"),
 	TAE_CameraStopOverlapp UMETA(DisplayName = "Camera Stop Overlapping"),
 	TAE_CameraIsOverlapping UMETA(DisplayName = "Camera Is Overlapping"),
+	TAE_TiantStartOverlapp UMETA(DisplayName = "Tiant Start Overlapping"),
+	TAE_TiantStopOverlapp UMETA(DisplayName = "Tiant Stop Overlapping"),
+	TAE_TiantIsOverlapping UMETA(DisplayName = "Tiant Is Overlapping"),
 	TAE_OnTick UMETA(DisplayName = "On Tick"),
 	TAE_OnTiantInteraction UMETA(DisplayName = "On Tiant Interaction"),
 	TAE_ViewRayCastHit UMETA(DisplayName = "On View-RayCast Hit"),	TAE_NotSet UMETA(DisplayName = "Not Set | Do not use")
@@ -22,9 +25,8 @@ enum ETriggerActionEnum
 UENUM(BlueprintType)
 enum ELambdaEnum
 {
-	LE_Scene1_RotateMirror UMETA(DisplayName = "Scene 1 | Rotate Mirror"),
-	LE_Scene1_RaiseTable UMETA(DisplayName = "Scene 1 | Raise Table"),
-	LE_Scene1_PressButton UMETA(DisplayName = "Scene 1 | Press Button"),
+	LE_Scene1_InitTiant UMETA(DisplayName = "Scene 1 | Init Tiant"),
+	LE_Scene1_MoveWall UMETA(DisplayName = "Scene 1 | Move Wall"),
 	LE_Scene1_DoNothing UMETA(DisplayName = "Scene 1 | DoNothing")
 };
 
@@ -40,6 +42,8 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (EditCondition = bUseActors))
 	TArray<AActor*> Actors;
+
+	AActor* TriggeredActor = nullptr;
 
 	float DeltaTime; //Used by OnTick
 
@@ -61,7 +65,10 @@ public:
 		{
 			Parameter.Vectors = PredefinedParameter.Vectors;
 		}
-
+		if (PredefinedParameter.bUseActors)
+		{
+			Parameter.Actors = PredefinedParameter.Actors;
+		}
 	}
 
 private:

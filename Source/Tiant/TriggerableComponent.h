@@ -23,15 +23,16 @@ protected:
 private:
 
 	UPROPERTY(EditAnywhere)
-	FTriggerableParams Parameter;
+	bool bEnable = true;
 
+	UPROPERTY(EditAnywhere)
+	FTriggerableParams Parameter;
 
 	UPROPERTY(EditAnywhere)
 	bool bDontUsePlayerPawn;
 
 	UPROPERTY(EditAnywhere, meta = (EditCondition = bDontUsePlayerPawn))
 	AActor* TriggeringActor;
-
 
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<ETriggerActionEnum> TriggeringAction;
@@ -48,4 +49,8 @@ public:
 	ELambdaEnum GetLambdaEnum();
 
 	FTriggerableParams& GetPredefinedParameters();
+
+	void Enable(bool Enable);
+
+	bool IsEnabled();
 };
