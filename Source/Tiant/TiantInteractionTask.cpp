@@ -51,10 +51,14 @@ void UTiantInteractionTask::OnTaskFinished(UBehaviorTreeComponent& OwnerComp, ui
 
 	Controller->StopMovement();
 
-	OwnerComp.GetBlackboardComponent()->ClearValue("Target");
-
+	
 	APuzzleLambdaActor* PuzzleLambdaActor = APuzzleLambdaActor::GetInstance();
 	FTriggerableParams Params(ETriggerActionEnum::TAE_OnTiantInteraction);
+
+	Params.TriggeredActor = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("Target"));
+
+	OwnerComp.GetBlackboardComponent()->ClearValue("Target");
+
 	PuzzleLambdaActor->FireLambda(AGlobalDatabaseActor::GetInstance()->GetTiant(), Params);
 }
 

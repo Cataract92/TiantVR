@@ -27,6 +27,8 @@ enum ELambdaEnum
 {
 	LE_Scene1_InitTiant UMETA(DisplayName = "Scene 1 | Init Tiant"),
 	LE_Scene1_MoveWall UMETA(DisplayName = "Scene 1 | Move Wall"),
+	LE_Scene1_MoveWall2 UMETA(DisplayName = "Scene 1 | Move Wall2"),
+	LE_Scene1_RotateMirror UMETA(DisplayName = "Scene 1 | Rotate Mirror"),
 	LE_Scene1_DoNothing UMETA(DisplayName = "Scene 1 | DoNothing")
 };
 

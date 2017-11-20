@@ -48,6 +48,7 @@ void APuzzleLambdaActor::BeginPlay()
 		FTimerHandle TimerHandle;
 		GetWorldTimerManager().SetTimer(OUT TimerHandle, [Params]()
 		{
+			Params.Actors[0]->SetActorHiddenInGame(false);
 			Cast<UTriggerableComponent>(Params.Actors[0]->GetComponentByClass(UTriggerableComponent::StaticClass()))->Enable(true);
 		} , 8.f, false);
 		
@@ -55,8 +56,9 @@ void APuzzleLambdaActor::BeginPlay()
 	});
 
 	/*
-	 * TriggeringActor: Sphere
-	 * TriggeredActor: Wall to Move
+	 * TriggeredActor: Sphere
+	 * Actors[0]: Wall to Move
+	 * Vectors[0]: Movedirection
 	 */
 	AddLambdaDefinition(ELambdaEnum::LE_Scene1_MoveWall, [this](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params)
 	{
@@ -65,7 +67,36 @@ void APuzzleLambdaActor::BeginPlay()
 
 		Params.Actors[0]->SetActorLocation(Params.Actors[0]->GetActorLocation() + Params.Vectors[0]);
 
-		AMySpeechRecognitionActor::GetInstance()->EnablePhrase("there",true);
+		AMySpeechRecognitionActor::GetInstance()->EnablePhrase("use",true);
+	});
+
+	/*
+	 * TriggeringActor: Tiant
+	 * TriggeredActor: Sphere
+	 * Actors[0]: Wall to Move
+	 * Vectors[0]: Movedirection
+	 */
+	AddLambdaDefinition(ELambdaEnum::LE_Scene1_MoveWall2, [this](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params)
+	{
+		// Disable this Trigger, so it just happens once.
+		Cast<UTriggerableComponent>(TriggeredActor->GetComponentByClass(UTriggerableComponent::StaticClass()))->Enable(false);
+
+		Params.Actors[0]->SetActorLocation(Params.Actors[0]->GetActorLocation() + Params.Vectors[0]);
+
+		AMySpeechRecognitionActor::GetInstance()->EnablePhrase("there", true);
+	});
+
+	/*
+	* TriggeringActor: Tiant
+	* TriggeredActor: Mirror
+	* Vectors[0]: Rotation as Vector
+	*/
+	AddLambdaDefinition(ELambdaEnum::LE_Scene1_RotateMirror, [this](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params)
+	{
+		// Disable this Trigger, so it just happens once.
+		Cast<UTriggerableComponent>(TriggeredActor->GetComponentByClass(UTriggerableComponent::StaticClass()))->Enable(false);
+
+		TriggeredActor->SetActorRotation(TriggeredActor->GetActorRotation() + FRotator(Params.Vectors[0].X, Params.Vectors[0].Y, Params.Vectors[0].Z));
 	});
 }
 
