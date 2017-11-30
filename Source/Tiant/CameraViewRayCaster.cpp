@@ -17,7 +17,6 @@ UCameraViewRayCaster::UCameraViewRayCaster()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
 	// ...
 }
 
@@ -54,12 +53,10 @@ void UCameraViewRayCaster::TickComponent(float DeltaTime, ELevelTick TickType, F
 		AActor* HitActor = GetValidActorByHitResult(HitResult);
 		if (!HitActor) return;
 
-		if (UTriggerComponent* TriggerComp = PlayerPawn->FindComponentByClass<UTriggerComponent>()) {
-			FTriggerableParams ViewCastParams(ETriggerActionEnum::TAE_ViewRayCastHit);
-			ViewCastParams.TriggeredActor = HitActor;
-			TriggerComp->FireLambda(ViewCastParams);
-		}
-
+		FTriggerableParams ViewCastParams(ETriggerActionEnum::TAE_ViewRayCastHit);
+		ViewCastParams.TriggeredActor = HitActor;
+		APuzzleLambdaActor::GetInstance()->FireLambda(PlayerPawn, ViewCastParams);
+		
 	} else
 	{
 		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("No Cam");

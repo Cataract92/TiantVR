@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "PuzzleLambdaActor.h"
+#include "GlobalDatabaseActor.h"
 #include "TriggerableComponent.generated.h"
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class TIANT_API UTriggerableComponent : public UActorComponent
@@ -45,6 +46,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	ETriggerActionEnum GetTriggeringAction();
+	AActor* GetTriggeringActor();
 
 	ELambdaEnum GetLambdaEnum();
 

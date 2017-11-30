@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TriggerableComponent.h"
-#include "GlobalDatabaseActor.h"
 #include <functional>
+#include "PuzzleLambdaActor.h"
 
 
 // Sets default values for this component's properties
@@ -21,12 +21,14 @@ void UTriggerableComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Parameter.TriggeredActor = GetOwner();
-
 	if (bDontUsePlayerPawn)
-		APuzzleLambdaActor::GetInstance()->RegisterLambda(TriggeringActor, GetOwner(), TriggeringAction);
-	else 
-		APuzzleLambdaActor::GetInstance()->RegisterLambda(GetWorld()->GetFirstPlayerController()->GetPawn(), GetOwner(), TriggeringAction);
+	{
+		APuzzleLambdaActor::GetInstance()->RegisterLambda(this, TriggeringAction);
+	} else 
+	{
+		TriggeringActor = GetWorld()->GetFirstPlayerController()->GetPawn();
+		APuzzleLambdaActor::GetInstance()->RegisterLambda(this, TriggeringAction);
+	}
 }
 
 
@@ -41,6 +43,11 @@ void UTriggerableComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 ETriggerActionEnum UTriggerableComponent::GetTriggeringAction()
 {
 	return TriggeringAction;
+}
+
+AActor* UTriggerableComponent::GetTriggeringActor()
+{
+	return TriggeringActor;
 }
 
 ELambdaEnum UTriggerableComponent::GetLambdaEnum()

@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PuzzleLambdaActor.h"
-#include "TriggerableComponent.h"
 #include "AIController.h"
 #include "MySpeechRecognitionActor.h"
 
@@ -51,8 +50,6 @@ void APuzzleLambdaActor::BeginPlay()
 			Params.Actors[0]->SetActorHiddenInGame(false);
 			Cast<UTriggerableComponent>(Params.Actors[0]->GetComponentByClass(UTriggerableComponent::StaticClass()))->Enable(true);
 		} , 8.f, false);
-		
-		
 	});
 
 	/*
@@ -118,43 +115,32 @@ TFunction<void(AActor* TriggeringActor, AActor* TriggeredActor, FTriggerablePara
 
 void APuzzleLambdaActor::FireLambda(AActor* TriggeringActor,FTriggerableParams& Params)
 {
-
 	if (Params.TriggerAction == ETriggerActionEnum::TAE_NotSet)
 	{
 		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Trigger Action not set");
 		return;
 	}
 
-	if (!TriggeringActorMap.Contains(TriggeringActor)) return;
-	if (!TriggeringActorMap[TriggeringActor].Contains(Params.TriggerAction)) return;
+	if (!ActionMap.Contains(Params.TriggerAction)) return;
+	if (!TriggeringActor->GetComponentByClass(UTriggerComponent::StaticClass())) return;
 
-	TArray<AActor*> TriggeredActors = TriggeringActorMap[TriggeringActor][Params.TriggerAction];
-	
-	for (TArray<AActor*>::TConstIterator IterActor(TriggeredActors); IterActor; ++IterActor) {
-		TArray<UActorComponent*> Components = (*IterActor)->GetComponentsByClass(UTriggerableComponent::StaticClass());
+	for (TArray<UTriggerableComponent*>::TConstIterator IterComponent(ActionMap[Params.TriggerAction]); IterComponent; ++IterComponent)
+	{
+		if ((*IterComponent)->GetTriggeringAction() != Params.TriggerAction || !(*IterComponent)->IsEnabled() || (*IterComponent)->GetTriggeringActor() != TriggeringActor || (Params.TriggeredActor!= nullptr && Params.TriggeredActor != (*IterComponent)->GetOwner())) continue;
 
-		for (TArray<UActorComponent*>::TConstIterator IterComp(Components); IterComp; ++IterComp) {
-			UTriggerableComponent* Component = static_cast<UTriggerableComponent*>(*IterComp);
-			
-			if (Component->GetTriggeringAction() != Params.TriggerAction || !Component->IsEnabled() || (Params.TriggeredActor != nullptr && Params.TriggeredActor != Component->GetPredefinedParameters().TriggeredActor)) continue;
-
-			FTriggerableParams::SetParameter(Params, Component->GetPredefinedParameters());
-
-			GetLambda(Component->GetLambdaEnum())(TriggeringActor, *IterActor, Params);
-		}
+		FTriggerableParams::SetParameter(Params, (*IterComponent)->GetPredefinedParameters());
+		LambdasMap[(*IterComponent)->GetLambdaEnum()](TriggeringActor, (*IterComponent)->GetOwner(), Params);
 	}
+
 }
 
-void APuzzleLambdaActor::RegisterLambda(AActor * TriggeringActor, AActor * TriggeredActor, ETriggerActionEnum TriggerAction)
+void APuzzleLambdaActor::RegisterLambda(UTriggerableComponent * TriggerableComponent, ETriggerActionEnum TriggerAction)
 {
-	if (!TriggeringActorMap.Contains(TriggeringActor)) {
-		TriggeringActorMap.Add(TriggeringActor, TMap<ETriggerActionEnum, TArray<AActor*>>());
-	}
-	if (!TriggeringActorMap[TriggeringActor].Contains(TriggerAction)) {
-		TriggeringActorMap[TriggeringActor].Add(TriggerAction, TArray<AActor*>());
-	}
-	if (!TriggeringActorMap[TriggeringActor][TriggerAction].Contains(TriggeredActor))
-		TriggeringActorMap[TriggeringActor][TriggerAction].Add(TriggeredActor);
+	if (!ActionMap.Contains(TriggerAction))
+		ActionMap.Add(TriggerAction, TArray<UTriggerableComponent*>());
+
+	if (!ActionMap[TriggerAction].Contains(TriggerableComponent))
+		ActionMap[TriggerAction].Add(TriggerableComponent);
 }
 
 APuzzleLambdaActor* APuzzleLambdaActor::GetInstance()

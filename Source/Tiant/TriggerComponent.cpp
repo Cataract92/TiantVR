@@ -36,16 +36,11 @@ void UTriggerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	FireOnCameraOverlappingEvent(DeltaTime);
 }
 
-void UTriggerComponent::FireLambda(FTriggerableParams& Params )
-{
-	APuzzleLambdaActor::GetInstance()->FireLambda(GetOwner(), Params);
-}
-
 void UTriggerComponent::FireOnTickEvent(float DeltaTime)
 {
 	FTriggerableParams OnTickParams(ETriggerActionEnum::TAE_OnTick);
 	OnTickParams.DeltaTime = DeltaTime;
-	FireLambda(OnTickParams);
+	APuzzleLambdaActor::GetInstance()->FireLambda(GetOwner(), OnTickParams);
 }
 
 bool bIsCameraOverlapping = false;
@@ -81,7 +76,7 @@ void UTriggerComponent::FireOnCameraOverlappingEvent(float DeltaTime)
 	{
 		FTriggerableParams CameraOverlappParams(ETriggerActionEnum::TAE_CameraIsOverlapping);
 		CameraOverlappParams.DeltaTime = DeltaTime;
-		FireLambda(CameraOverlappParams);
+		APuzzleLambdaActor::GetInstance()->FireLambda(GetOwner(), CameraOverlappParams);
 	}
 
 	// If Camera is Overlapping now, but wasn't before fire CameraStartOverlap-Event
@@ -90,7 +85,7 @@ void UTriggerComponent::FireOnCameraOverlappingEvent(float DeltaTime)
 		bIsCameraOverlapping = true;
 
 		FTriggerableParams CameraOverlappParams(ETriggerActionEnum::TAE_CameraStartOverlapp);
-		FireLambda(CameraOverlappParams);
+		APuzzleLambdaActor::GetInstance()->FireLambda(GetOwner(), CameraOverlappParams);
 	}
 
 
@@ -100,6 +95,6 @@ void UTriggerComponent::FireOnCameraOverlappingEvent(float DeltaTime)
 		bIsCameraOverlapping = false;
 
 		FTriggerableParams CameraOverlappParams(ETriggerActionEnum::TAE_CameraStopOverlapp);
-		FireLambda(CameraOverlappParams);
+		APuzzleLambdaActor::GetInstance()->FireLambda(GetOwner(), CameraOverlappParams);
 	}
 }
