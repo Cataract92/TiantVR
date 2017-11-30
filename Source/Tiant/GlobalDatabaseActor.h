@@ -111,6 +111,9 @@ public:
 	void PlaySoundAtLocation(FVector Location, const FString& AudioFile) const;
 	ATiantCharacter* GetTiant();
 
+	UPROPERTY(EditAnywhere)
+	TArray<AActor*> DevActors;
+
 	static AGlobalDatabaseActor* GetInstance();
 
 private:
