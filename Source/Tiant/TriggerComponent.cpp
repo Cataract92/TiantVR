@@ -2,6 +2,7 @@
 
 #include "TriggerComponent.h"
 #include "VRTriggerVolume.h"
+#include "VRSkeletonComponent.h"
 
 #define OUT
 // Sets default values for this component's properties
@@ -64,11 +65,13 @@ void UTriggerComponent::FireOnCameraOverlappingEvent(float DeltaTime)
 
 	bool bIsCameraOverlappingCheck = false;
 
-	UCameraComponent* Cam = Cast<UCameraComponent>(GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UCameraComponent>());
-
 	for (TArray<AVRTriggerVolume*>::TConstIterator ActorItr(TriggerVolumes); ActorItr; ++ActorItr)
 	{
-		bIsCameraOverlappingCheck = (*ActorItr)->IsOverlappingCamera(DeltaTime, Cam);
+		UVRSkeletonComponent* Component = Cast<UVRSkeletonComponent>((*ActorItr)->FindComponentByClass(UVRSkeletonComponent::StaticClass()));
+
+		if (!Component) continue;
+
+		bIsCameraOverlappingCheck = (*ActorItr)->IsOverlapping(DeltaTime, Component->GetHipPosition());
 		break;
 	}
 

@@ -3,6 +3,7 @@
 #include "VRSkeletonComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GlobalDatabaseActor.h"
+#include <string>
 
 
 // Sets default values for this component's properties
@@ -34,23 +35,59 @@ void UVRSkeletonComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	FMinimalViewInfo ViewInfo;
 	GetOwner()->FindComponentByClass<UCameraComponent>()->GetCameraView(DeltaTime,ViewInfo);
 	
-	Eyes.Set(ViewInfo.Location.X - 100, ViewInfo.Location.Y, ViewInfo.Location.Z);
+	Eyes.Set(ViewInfo.Location.X, ViewInfo.Location.Y + 100, ViewInfo.Location.Z);
 	
-	Head = (Rotator + ViewInfo.Rotation).RotateVector(FVector(0, 0, Eyes.Z) * RatioEyesToHead) + Eyes ;
+	Head = ViewInfo.Rotation.RotateVector(FVector(0, 0, Eyes.Z) * RatioEyesToHead) + Eyes ;
 
-	FVector tmp = Head - Eyes;
+	FVector tmp = Eyes - Head;
 	tmp.Normalize(1.f);
-	Neck = Head + -(tmp * Head.Z * RatioHeadToNeck);
+	Neck = Head + (tmp * Head.Z * RatioHeadToNeck);
 
-	tmp = Eyes - Neck;	
-	tmp.Normalize(1.f);
-	Chest = Neck + -(tmp * Head.Z * RatioNeckToChest);
+	tmp = FVector(0, 0, -1) * Head.Z * RatioNeckToChest;
 
-	tmp = Neck - Chest;
-	tmp.Normalize(1.f);
-	Hip = Chest + -(tmp * Head.Z * RatioChestToHip);
+	FVector EyesToNeckNormalized = Eyes - Neck;
+	EyesToNeckNormalized.Normalize();
 
+	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(EyesToNeckNormalized, FVector::UpVector)));
 
+	if (angle > AngleNeck)
+	{
+		if (FVector::CrossProduct(EyesToNeckNormalized, FVector::UpVector).Y < 0)
+		{
+			angle *= -1;
+		}
+
+		if (angle > AngleNeck)
+			tmp = tmp.RotateAngleAxis(-(angle - AngleNeck), ViewInfo.Rotation.Vector());
+		else
+			tmp = tmp.RotateAngleAxis(-(angle + AngleNeck), ViewInfo.Rotation.Vector());
+
+	}
+
+	Chest = Neck + tmp;
+
+	tmp = FVector(0, 0, -1) * Head.Z * RatioChestToHip;
+
+	FVector NeckToChestNormalized = Neck - Chest;
+	NeckToChestNormalized.Normalize();
+
+	angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(NeckToChestNormalized, FVector::UpVector)));
+
+	if (angle > AngleChest)
+	{
+		if (FVector::CrossProduct(NeckToChestNormalized, FVector::UpVector).Y < 0)
+		{
+			angle *= -1;
+		}
+
+		if (angle > AngleChest)
+			tmp = tmp.RotateAngleAxis(-(angle - AngleChest), ViewInfo.Rotation.Vector());
+		else
+			tmp = tmp.RotateAngleAxis(-(angle + AngleChest), ViewInfo.Rotation.Vector());
+
+	}
+
+	Hip = Chest + tmp;
 
 
 	AGlobalDatabaseActor::GetInstance()->DevActors[0]->SetActorLocation(Eyes);
@@ -61,3 +98,27 @@ void UVRSkeletonComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
+FVector UVRSkeletonComponent::GetEyesPosition() const
+{
+	return Eyes;
+}
+
+FVector UVRSkeletonComponent::GetHeadPosition() const
+{
+	return Head;
+}
+
+FVector UVRSkeletonComponent::GetNeckPosition() const
+{
+	return Neck;
+}
+
+FVector UVRSkeletonComponent::GetChestPosition() const
+{
+	return Chest;
+}
+
+FVector UVRSkeletonComponent::GetHipPosition() const
+{
+	return Hip;
+}

@@ -21,20 +21,37 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+
+	UPROPERTY(EditAnywhere)
+	float AngleNeck = 40;
+	
+	UPROPERTY(EditAnywhere)
+	float AngleChest = 40;
+
+	UPROPERTY(EditAnywhere)
+	bool bUseCustomRations = false;
+
+	UPROPERTY(EditAnywhere, meta = (EditCondition = bUseCustomRations))
+	float RatioEyesToHead = (1. - 0.936);
+	UPROPERTY(EditAnywhere, meta = (EditCondition = bUseCustomRations))
+	float RatioHeadToNeck = (1 - 0.870);
+	UPROPERTY(EditAnywhere, meta = (EditCondition = bUseCustomRations))
+	float RatioNeckToChest = (0.870 - 0.720);
+	UPROPERTY(EditAnywhere, meta = (EditCondition = bUseCustomRations))
+	float RatioChestToHip = (0.720 - 0.530);
+
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	FVector GetEyesPosition() const;
+	FVector GetHeadPosition() const;
+	FVector GetNeckPosition() const;
+	FVector GetChestPosition() const;
+	FVector GetHipPosition() const;
 
 private:
 
 	FVector Eyes = FVector(), Head = FVector(), Neck = FVector(), Chest = FVector(), Hip = FVector();
 	FVector EyesToHead = FVector(), HeadToNeck = FVector(), NeckToChest = FVector(), ChestToHip = FVector();
-
-	float RatioEyesToHead = (1. - 0.936);
-	float RatioHeadToNeck = (1 - 0.870);
-	float RatioNeckToChest = (0.870 - 0.720);
-	float RatioChestToHip = (0.720 - 0.530);
-
-	UPROPERTY(EditAnywhere)
-	FRotator Rotator;
 
 };

@@ -7,14 +7,9 @@
 
 #define OUT
 
-bool AVRTriggerVolume::IsOverlappingCamera(float DeltaTime, UCameraComponent* Camera) const
+bool AVRTriggerVolume::IsOverlapping(float DeltaTime, const FVector& Position) const
 {
-	if (!Camera) return false;
-
-	FMinimalViewInfo ViewInfo;
-	Camera->GetCameraView(DeltaTime, OUT ViewInfo);
-
-	FVector CameraLocation = ViewInfo.Location;
+	FVector CameraLocation = Position;
 	FVector Min = GetComponentsBoundingBox().Min;
 	FVector Max = GetComponentsBoundingBox().Max;
 
