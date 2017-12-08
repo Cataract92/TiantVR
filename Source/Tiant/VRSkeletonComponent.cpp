@@ -41,9 +41,9 @@ void UVRSkeletonComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 	FVector tmp = Eyes - Head;
 	tmp.Normalize(1.f);
-	Neck = Head + (tmp * Head.Z * RatioHeadToNeck);
+	Neck = Head + (tmp * MaxHeight * RatioHeadToNeck);
 
-	tmp = FVector(0, 0, -1) * Head.Z * RatioNeckToChest;
+	tmp = FVector(0, 0, -1) * MaxHeight * RatioNeckToChest;
 
 	FVector EyesToNeckNormalized = Eyes - Neck;
 	EyesToNeckNormalized.Normalize();
@@ -66,7 +66,7 @@ void UVRSkeletonComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 	Chest = Neck + tmp;
 
-	tmp = FVector(0, 0, -1) * Head.Z * RatioChestToHip;
+	tmp = FVector(0, 0, -1) * MaxHeight * RatioChestToHip;
 
 	FVector NeckToChestNormalized = Neck - Chest;
 	NeckToChestNormalized.Normalize();
@@ -88,7 +88,6 @@ void UVRSkeletonComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	}
 
 	Hip = Chest + tmp;
-
 
 	AGlobalDatabaseActor::GetInstance()->DevActors[0]->SetActorLocation(Eyes);
 	AGlobalDatabaseActor::GetInstance()->DevActors[1]->SetActorLocation(Head);

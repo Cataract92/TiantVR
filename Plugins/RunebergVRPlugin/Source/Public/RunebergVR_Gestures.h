@@ -13,6 +13,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #pragma once
 
+#include "Components/SplineComponent.h"
+#include "Components/SplineMeshComponent.h"
 #include "Components/SceneComponent.h"
 #include "RunebergVR_Gestures_Database.h"
 #include "RunebergVR_Gestures.generated.h"

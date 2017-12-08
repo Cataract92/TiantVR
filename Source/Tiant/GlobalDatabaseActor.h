@@ -9,8 +9,8 @@
 #include "EngineUtils.h"
 #include "TiantCharacter.h"
 #include "RunebergVR_Gestures_Database.h"
+#include "GestureRecognitionActor.h"
 #include "GlobalDatabaseActor.generated.h"
-
 
 
 UENUM(BlueprintType)
@@ -110,6 +110,8 @@ public:
 	URunebergVR_Gestures_Database* GetGestureDatabase() const;
 	void PlaySoundAtLocation(FVector Location, const FString& AudioFile) const;
 	ATiantCharacter* GetTiant();
+
+	AGestureRecognitionActor* GetGestureRecognitionActor();
 
 	UPROPERTY(EditAnywhere)
 	TArray<AActor*> DevActors;

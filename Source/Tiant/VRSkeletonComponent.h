@@ -20,7 +20,10 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+public:
+	
+	UPROPERTY(EditAnywhere)
+	float MaxHeight = 160.f;
 
 	UPROPERTY(EditAnywhere)
 	float AngleNeck = 40;

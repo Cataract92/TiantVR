@@ -9,11 +9,10 @@
 
 bool AVRTriggerVolume::IsOverlapping(float DeltaTime, const FVector& Position) const
 {
-	FVector CameraLocation = Position;
 	FVector Min = GetComponentsBoundingBox().Min;
 	FVector Max = GetComponentsBoundingBox().Max;
 
-	return IsBeetweenPoints(Min.X, CameraLocation.X, Max.X) && IsBeetweenPoints(Min.Y, CameraLocation.Y, Max.Y) && IsBeetweenPoints(Min.Z, CameraLocation.Z, Max.Z);
+	return IsBeetweenPoints(Min.X, Position.X, Max.X) && IsBeetweenPoints(Min.Y, Position.Y, Max.Y) && IsBeetweenPoints(Min.Z, Position.Z, Max.Z);
 }
 
 bool AVRTriggerVolume::IsBeetweenPoints(float MinX, float MidX, float MaxX)

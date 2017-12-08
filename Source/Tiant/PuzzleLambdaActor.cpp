@@ -122,7 +122,6 @@ void APuzzleLambdaActor::FireLambda(AActor* TriggeringActor,FTriggerableParams& 
 	}
 
 	if (!ActionMap.Contains(Params.TriggerAction)) return;
-	if (!TriggeringActor->GetComponentByClass(UTriggerComponent::StaticClass())) return;
 
 	for (TArray<UTriggerableComponent*>::TConstIterator IterComponent(ActionMap[Params.TriggerAction]); IterComponent; ++IterComponent)
 	{

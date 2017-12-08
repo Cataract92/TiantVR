@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GlobalDatabaseActor.h"
+#include "GestureComponent.h"
 
 
 // Sets default values
@@ -17,6 +18,7 @@ void AGlobalDatabaseActor::BeginPlay()
 	Super::BeginPlay();
 	GesturesDatabase = NewObject<URunebergVR_Gestures_Database>();
 }
+
 
 // Called every frame
 void AGlobalDatabaseActor::Tick(float DeltaTime)
@@ -106,6 +108,7 @@ USoundWave* AGlobalDatabaseActor::GetSoundWaveFromFile(const FString& filePath) 
 	return sw;
 }
 
+
 AGlobalDatabaseActor* AGlobalDatabaseActor::GetInstance()
 {
 	// Prevents Nullptrexception in Iterator if this is called before or while Gameinitializaion
@@ -137,5 +140,21 @@ ATiantCharacter* AGlobalDatabaseActor::GetTiant()
 	// If no GDActor is found return null
 	return nullptr;
 
+}
+
+AGestureRecognitionActor* AGlobalDatabaseActor::GetGestureRecognitionActor()
+{
+	// Prevents Nullptrexception in Iterator if this is called before or while Gameinitializaion
+	if (!GEngine->GameViewport->GetWorld()) return nullptr;
+
+	// Iterate through all GlobalDatabaseActors and return the first one found
+	// (only one should exist)
+	for (TActorIterator<AGestureRecognitionActor> ActorItr(GEngine->GameViewport->GetWorld()); ActorItr; ++ActorItr)
+	{
+		return *ActorItr;
+	}
+
+	// If no GDActor is found return null
+	return nullptr;
 }
 

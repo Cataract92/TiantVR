@@ -6,8 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "GlobalDatabaseActor.h"
 #include "TriggerableComponent.h"
-#include "TriggerComponent.h"
-#include "EngineUtils.h"
 #include "PuzzleLambdaActor.generated.h"
 
 UCLASS()
