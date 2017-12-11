@@ -16,7 +16,6 @@ AGlobalDatabaseActor::AGlobalDatabaseActor()
 void AGlobalDatabaseActor::BeginPlay()
 {
 	Super::BeginPlay();
-	GesturesDatabase = NewObject<URunebergVR_Gestures_Database>();
 }
 
 
@@ -46,11 +45,6 @@ void AGlobalDatabaseActor::PrintDebugMessage(FString Message)
 ATextRenderActor* AGlobalDatabaseActor::GetTextRenderer() const
 {
 	return TextRenderer;
-}
-
-URunebergVR_Gestures_Database* AGlobalDatabaseActor::GetGestureDatabase() const
-{
-	return GesturesDatabase;
 }
 
 void AGlobalDatabaseActor::PlaySoundAtLocation(FVector Location,const FString& AudioFile) const

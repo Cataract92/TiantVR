@@ -107,7 +107,7 @@ public:
 	virtual void PrintDebugMessage(FString Message);
 
 	ATextRenderActor* GetTextRenderer() const;
-	URunebergVR_Gestures_Database* GetGestureDatabase() const;
+	
 	void PlaySoundAtLocation(FVector Location, const FString& AudioFile) const;
 	ATiantCharacter* GetTiant();
 
@@ -121,8 +121,6 @@ public:
 private:
 	UPROPERTY(EditAnywhere)
 	ATextRenderActor* TextRenderer;
-
-	URunebergVR_Gestures_Database* GesturesDatabase;
 
 	UAudioComponent* AudioComponent;
 

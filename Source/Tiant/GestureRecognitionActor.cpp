@@ -15,11 +15,21 @@ AGestureRecognitionActor::AGestureRecognitionActor()
 void AGestureRecognitionActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GesturesDatabase = NewObject<URunebergVR_Gestures_Database>();
 	
 	GetWorld()->GetFirstPlayerController()->GetPawn()->InputComponent->BindAction("RightTrigger", IE_Pressed, this, &AGestureRecognitionActor::PressedRightTrigger);
-	GetWorld()->GetFirstPlayerController()->GetPawn()->InputComponent->BindAction("LeftTrigger", IE_Pressed, this, &AGestureRecognitionActor::PressedLeftTrigger);
 	GetWorld()->GetFirstPlayerController()->GetPawn()->InputComponent->BindAction("RightTrigger", IE_Released, this, &AGestureRecognitionActor::ReleasedRightTrigger);
+	
+	GetWorld()->GetFirstPlayerController()->GetPawn()->InputComponent->BindAction("LeftTrigger", IE_Pressed, this, &AGestureRecognitionActor::PressedLeftTrigger);
 	GetWorld()->GetFirstPlayerController()->GetPawn()->InputComponent->BindAction("LeftTrigger", IE_Released, this, &AGestureRecognitionActor::ReleasedLeftTrigger);
+
+	GetWorld()->GetFirstPlayerController()->GetPawn()->InputComponent->BindAction("RightGrip", IE_Pressed, this, &AGestureRecognitionActor::PressedRightGrip);
+	GetWorld()->GetFirstPlayerController()->GetPawn()->InputComponent->BindAction("RightGrip", IE_Released, this, &AGestureRecognitionActor::ReleasedRightGrip);
+
+	GetWorld()->GetFirstPlayerController()->GetPawn()->InputComponent->BindAction("LeftGrip", IE_Pressed, this, &AGestureRecognitionActor::PressedLeftGrip);
+	GetWorld()->GetFirstPlayerController()->GetPawn()->InputComponent->BindAction("LeftGrip", IE_Released, this, &AGestureRecognitionActor::ReleasedLeftGrip);
+
 }
 
 // Called every frame
@@ -27,6 +37,11 @@ void AGestureRecognitionActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+URunebergVR_Gestures_Database* AGestureRecognitionActor::GetGestureDatabase() const
+{
+	return GesturesDatabase;
 }
 
 UGestureComponent* AGestureRecognitionActor::GetRightHand()
@@ -65,7 +80,7 @@ void AGestureRecognitionActor::PressedRightTrigger()
 
 void AGestureRecognitionActor::ReleasedRightTrigger()
 {
-	GetRightHand()->StopGestureRecording();
+	GetRightHand()->StopGestureRecording(false);
 }
 
 void AGestureRecognitionActor::PressedLeftTrigger()
@@ -75,7 +90,27 @@ void AGestureRecognitionActor::PressedLeftTrigger()
 
 void AGestureRecognitionActor::ReleasedLeftTrigger()
 {
-	GetLeftHand()->StopGestureRecording();
+	GetLeftHand()->StopGestureRecording(false);
+}
+
+void AGestureRecognitionActor::PressedRightGrip()
+{
+	GetRightHand()->StartGestureRecording();
+}
+
+void AGestureRecognitionActor::ReleasedRightGrip()
+{
+	GetRightHand()->StopGestureRecording(true);
+}
+
+void AGestureRecognitionActor::PressedLeftGrip()
+{
+	GetLeftHand()->StartGestureRecording();
+}
+
+void AGestureRecognitionActor::ReleasedLeftGrip()
+{
+	GetLeftHand()->StopGestureRecording(true);
 }
 
 

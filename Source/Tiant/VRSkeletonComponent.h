@@ -26,9 +26,17 @@ public:
 	float MaxHeight = 160.f;
 
 	UPROPERTY(EditAnywhere)
+	bool bUseThresholds = false;
+
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "!bUseThresholds"))
+	float AnglePercentNeck = 0.3;
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "!bUseThresholds"))
+	float AnglePercentChest = 0.3;
+
+	UPROPERTY(EditAnywhere, meta = (EditCondition = bUseThresholds))
 	float AngleNeck = 40;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, meta = (EditCondition = bUseThresholds))
 	float AngleChest = 40;
 
 	UPROPERTY(EditAnywhere)

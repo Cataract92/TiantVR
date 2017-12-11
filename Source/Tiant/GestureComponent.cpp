@@ -19,7 +19,6 @@ UGestureComponent::UGestureComponent()
 void UGestureComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
 	// ...
 
 }
@@ -30,16 +29,29 @@ void UGestureComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	//AGlobalDatabaseActor::GetInstance()->PrintDebugMessage(GetAttachParent()->GetRelativeTransform().GetLocation().ToString());
 	// ...
 }
 
 void UGestureComponent::StartGestureRecording()
 {
-	
+	AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Start");
+
+	StartRecordingGesture(RecordingInverval, "", DrawLine, LineMesh, LineMaterial, LineOffset, FRotator(0.f,-GetOwner()->GetActorRotation().Yaw,0.f));
 }
 
-void UGestureComponent::StopGestureRecording()
+void UGestureComponent::StopGestureRecording(bool SaveToDB)
 {
-
+	if (SaveToDB){
+		KnownGesturesDB = AGlobalDatabaseActor::GetInstance()->GetGestureRecognitionActor()->GetGestureDatabase();
+		StopRecordingGesture(SaveToDB);
+	}
+	else
+	{
+		FVRGesture Gesture = StopRecordingGesture(SaveToDB);
+		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage(FindGesture());
+	}
+	
+	
 }
 

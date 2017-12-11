@@ -48,52 +48,88 @@ void UVRSkeletonComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	FVector EyesToNeckNormalized = Eyes - Neck;
 	EyesToNeckNormalized.Normalize();
 
-	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(EyesToNeckNormalized, FVector::UpVector)));
-
-	if (angle > AngleNeck)
+	if (bUseThresholds)
 	{
+
+		float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(EyesToNeckNormalized, FVector::UpVector)));
+
+		if (angle > AngleNeck)
+		{
+			if (FVector::CrossProduct(EyesToNeckNormalized, FVector::UpVector).Y < 0)
+			{
+				angle *= -1;
+			}
+
+			if (angle > AngleNeck)
+				tmp = tmp.RotateAngleAxis(-(angle - AngleNeck), ViewInfo.Rotation.Vector());
+			else
+				tmp = tmp.RotateAngleAxis(-(angle + AngleNeck), ViewInfo.Rotation.Vector());
+
+		}
+
+		Chest = Neck + tmp;
+
+		tmp = FVector(0, 0, -1) * MaxHeight * RatioChestToHip;
+
+		FVector NeckToChestNormalized = Neck - Chest;
+		NeckToChestNormalized.Normalize();
+
+		angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(NeckToChestNormalized, FVector::UpVector)));
+
+		if (angle > AngleChest)
+		{
+			if (FVector::CrossProduct(NeckToChestNormalized, FVector::UpVector).Y < 0)
+			{
+				angle *= -1;
+			}
+
+			if (angle > AngleChest)
+				tmp = tmp.RotateAngleAxis(-(angle - AngleChest), ViewInfo.Rotation.Vector());
+			else
+				tmp = tmp.RotateAngleAxis(-(angle + AngleChest), ViewInfo.Rotation.Vector());
+
+		}
+
+		Hip = Chest + tmp;
+
+	} else {
+		
+		float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(EyesToNeckNormalized, FVector::UpVector)));
+
 		if (FVector::CrossProduct(EyesToNeckNormalized, FVector::UpVector).Y < 0)
 		{
 			angle *= -1;
 		}
 
-		if (angle > AngleNeck)
-			tmp = tmp.RotateAngleAxis(-(angle - AngleNeck), ViewInfo.Rotation.Vector());
-		else
-			tmp = tmp.RotateAngleAxis(-(angle + AngleNeck), ViewInfo.Rotation.Vector());
+		tmp = tmp.RotateAngleAxis(-angle * AnglePercentNeck, ViewInfo.Rotation.Vector());
 
-	}
+		Chest = Neck + tmp;
 
-	Chest = Neck + tmp;
+		tmp = FVector(0, 0, -1) * MaxHeight * RatioChestToHip;
 
-	tmp = FVector(0, 0, -1) * MaxHeight * RatioChestToHip;
+		FVector NeckToChestNormalized = Neck - Chest;
+		NeckToChestNormalized.Normalize();
 
-	FVector NeckToChestNormalized = Neck - Chest;
-	NeckToChestNormalized.Normalize();
+		angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(NeckToChestNormalized, FVector::UpVector)));
 
-	angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(NeckToChestNormalized, FVector::UpVector)));
-
-	if (angle > AngleChest)
-	{
 		if (FVector::CrossProduct(NeckToChestNormalized, FVector::UpVector).Y < 0)
 		{
 			angle *= -1;
 		}
 
-		if (angle > AngleChest)
-			tmp = tmp.RotateAngleAxis(-(angle - AngleChest), ViewInfo.Rotation.Vector());
-		else
-			tmp = tmp.RotateAngleAxis(-(angle + AngleChest), ViewInfo.Rotation.Vector());
+		tmp = tmp.RotateAngleAxis(-angle * AnglePercentChest, ViewInfo.Rotation.Vector());
+			
+		Hip = Chest + tmp;
 
 	}
 
-	Hip = Chest + tmp;
-
+	/*
 	AGlobalDatabaseActor::GetInstance()->DevActors[0]->SetActorLocation(Eyes);
 	AGlobalDatabaseActor::GetInstance()->DevActors[1]->SetActorLocation(Head);
 	AGlobalDatabaseActor::GetInstance()->DevActors[2]->SetActorLocation(Neck);
 	AGlobalDatabaseActor::GetInstance()->DevActors[3]->SetActorLocation(Chest);
 	AGlobalDatabaseActor::GetInstance()->DevActors[4]->SetActorLocation(Hip);
+	*/
 	// ...
 }
 

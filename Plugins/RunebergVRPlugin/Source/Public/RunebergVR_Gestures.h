@@ -19,6 +19,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "RunebergVR_Gestures_Database.h"
 #include "RunebergVR_Gestures.generated.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(RunebergVR, Log, All);
 
 USTRUCT(BlueprintType)
 struct FFloatArray

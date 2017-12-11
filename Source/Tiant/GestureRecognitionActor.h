@@ -24,13 +24,23 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-private:
+	URunebergVR_Gestures_Database* GetGestureDatabase() const;
+
 	UGestureComponent* GetRightHand();
 
 	UGestureComponent* GetLeftHand();
+
+private:
+	
+	URunebergVR_Gestures_Database* GesturesDatabase;
 
 	void PressedRightTrigger();
 	void ReleasedRightTrigger();
 	void PressedLeftTrigger();
 	void ReleasedLeftTrigger();
+
+	void PressedRightGrip();
+	void ReleasedRightGrip();
+	void PressedLeftGrip();
+	void ReleasedLeftGrip();
 };

@@ -18,6 +18,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "RunebergVR_Gestures.h"
 
 
+DEFINE_LOG_CATEGORY(RunebergVR)
+
 // Sets default values for this component's properties
 URunebergVR_Gestures::URunebergVR_Gestures()
 {
@@ -54,6 +56,7 @@ void URunebergVR_Gestures::TickComponent(float DeltaTime, ELevelTick TickType, F
 		if (DeltaSeconds > Interval)
 		{
 			// Record current location of the controller and add to the existing pattern
+
 			VRGesture.GesturePattern.Add(GetAttachParent()->GetRelativeTransform().GetLocation());
 
 			// Reset timer
@@ -85,6 +88,7 @@ void URunebergVR_Gestures::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 
 			// Set the location of the spline
+
 			LineMeshComponent->SetWorldLocation(LineMeshComponent->GetComponentTransform().GetLocation() + RT_LineOffset);
 			LineMeshComponent->SetWorldRotation(FRotator(LineMeshComponent->GetComponentTransform().GetRotation()).Add(RT_RotationOffset.Pitch, RT_RotationOffset.Yaw, RT_RotationOffset.Roll));
 			RTSplineMeshArray.Add(LineMeshComponent);
