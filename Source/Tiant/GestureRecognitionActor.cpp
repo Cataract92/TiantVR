@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GestureRecognitionActor.h"
+#include "GlobalDatabaseActor.h"
 
 
 // Sets default values
@@ -30,13 +31,23 @@ void AGestureRecognitionActor::BeginPlay()
 	GetWorld()->GetFirstPlayerController()->GetPawn()->InputComponent->BindAction("LeftGrip", IE_Pressed, this, &AGestureRecognitionActor::PressedLeftGrip);
 	GetWorld()->GetFirstPlayerController()->GetPawn()->InputComponent->BindAction("LeftGrip", IE_Released, this, &AGestureRecognitionActor::ReleasedLeftGrip);
 
+	GetWorld()->GetFirstPlayerController()->GetPawn()->InputComponent->BindAction("MenuButtonRight", IE_Released, this, &AGestureRecognitionActor::PressedRightMenuButton);
+
+	TArray<FString> Files;
+
+	FPlatformFileManager::Get().GetPlatformFile().FindFiles(OUT Files, *( FPaths::ProjectDir() + "Content/Gestures/"),*FString("json"));
+
+	for (FString File : Files)
+	{
+		GesturesDatabase->VRGesturePatterns.Add(LoadGestureFromFile(File));
+	}
 }
 
 // Called every frame
 void AGestureRecognitionActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 }
 
 URunebergVR_Gestures_Database* AGestureRecognitionActor::GetGestureDatabase() const
@@ -113,5 +124,37 @@ void AGestureRecognitionActor::ReleasedLeftGrip()
 	GetLeftHand()->StopGestureRecording(true);
 }
 
+void AGestureRecognitionActor::PressedRightMenuButton()
+{
+	for (FVRGesture Gesture : GesturesDatabase->VRGesturePatterns)
+	{
+		SaveGestureToFile(Gesture);
+	}
+}
 
+void AGestureRecognitionActor::SaveGestureToFile(FVRGesture Gesture)
+{
+	TSharedPtr<FJsonObject> JsonObject = FJsonObjectConverter::UStructToJsonObject(Gesture);
+	FString Output;
 
+	FJsonSerializer::Serialize(JsonObject.ToSharedRef(), TJsonWriterFactory<>::Create(&Output));
+
+	if (FPlatformFileManager::Get().GetPlatformFile().FileExists(*(FPaths::ProjectDir() + "Content/Gestures/" + Gesture.GestureName + ".json")))
+		FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*(FPaths::ProjectDir() + "Content/Gestures/" + Gesture.GestureName + ".json"));
+
+	FFileHelper::SaveStringToFile(Output, *(FPaths::ProjectDir() + "Content/Gestures/" + Gesture.GestureName + ".json"));
+};
+
+FVRGesture AGestureRecognitionActor::LoadGestureFromFile(FString File)
+{
+	FString Output;
+	FFileHelper::LoadFileToString(Output, *File);
+
+	TSharedPtr<FJsonObject> JsonObject;
+	FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Output), JsonObject);
+
+	FVRGesture Gesture;
+	FJsonObjectConverter::JsonObjectToUStruct(JsonObject.ToSharedRef(),&Gesture);
+
+	return Gesture;
+}

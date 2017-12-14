@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GestureComponent.h"
+#include "JsonObjectConverter.h"
 #include "GestureRecognitionActor.generated.h"
 
 UCLASS()
@@ -43,4 +44,8 @@ private:
 	void ReleasedRightGrip();
 	void PressedLeftGrip();
 	void ReleasedLeftGrip();
+
+	void PressedRightMenuButton();
+	void SaveGestureToFile(FVRGesture Gesture);
+	FVRGesture LoadGestureFromFile(FString File);
 };

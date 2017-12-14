@@ -45,6 +45,7 @@ void UGestureComponent::StopGestureRecording(bool SaveToDB)
 	if (SaveToDB){
 		KnownGesturesDB = AGlobalDatabaseActor::GetInstance()->GetGestureRecognitionActor()->GetGestureDatabase();
 		StopRecordingGesture(SaveToDB);
+		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Gesture Saved");
 	}
 	else
 	{
