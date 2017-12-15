@@ -2,6 +2,7 @@
 
 #include "GestureComponent.h"
 #include "GlobalDatabaseActor.h"
+#include "PuzzleLambdaActor.h"
 
 
 // Sets default values for this component's properties
@@ -50,6 +51,15 @@ void UGestureComponent::StopGestureRecording(bool SaveToDB)
 	else
 	{
 		FVRGesture Gesture = StopRecordingGesture(SaveToDB);
+		FString FoundGesture = FindGesture();
+		if (!FoundGesture.Equals("UNKNOWN_GESTURE"))
+		{
+			FTriggerableParams GestureParams(TAE_OnGesture);
+			GestureParams.Strings[0] = FoundGesture;
+			GestureParams.Strings[1] = GetName();
+			APuzzleLambdaActor::GetInstance()->FireLambda(GetWorld()->GetFirstPlayerController()->GetPawn(), GestureParams);
+		}
+
 		AGlobalDatabaseActor::GetInstance()->PrintDebugMessage(FindGesture());
 	}
 	

@@ -17,16 +17,46 @@ void APuzzleLambdaActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	/*
-	AddLambdaDefinition(ELambdaEnum::LE_Scene1_RotateMirror, [](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params) {
+	
+	AddLambdaDefinition(ELambdaEnum::LE_Scene1_OrderTiantMove, [this](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params) {
 		
-		if (Params.Vectors.Num() == 0)
+		UCameraComponent* Camera = GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UCameraComponent>();
+
+		if (Camera)
 		{
-			return;
+			FMinimalViewInfo ViewInfo;
+			Camera->GetCameraView(GetWorld()->GetDeltaSeconds(), OUT ViewInfo);
+
+			FHitResult HitResult;
+			GetWorld()->LineTraceSingleByObjectType(OUT HitResult, ViewInfo.Location, ViewInfo.Location + ViewInfo.Rotation.Vector() * 10000, FCollisionObjectQueryParams());
+			FVector HitLocation = HitResult.Location;
+
+			ATiantCharacter* TiantCharacter = AGlobalDatabaseActor::GetInstance()->GetTiant();
+			AAIController* Controller = Cast<AAIController>(TiantCharacter->GetController());
+
+			EPathFollowingRequestResult::Type Result = Controller->MoveToLocation(HitLocation);
 		}
-		TriggeredActor->SetActorRotation(FRotator(Params.Vectors[0].X, Params.Vectors[0].Y, Params.Vectors[0].Z));
 	});
-	*/
+
+	AddLambdaDefinition(ELambdaEnum::LE_Scene1_OrderTiantUse, [this](AActor* TriggeringActor, AActor* TriggeredActor, FTriggerableParams& Params)
+	{
+		UCameraComponent* Camera = GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UCameraComponent>();
+
+		if (Camera)
+		{
+			FMinimalViewInfo ViewInfo;
+			Camera->GetCameraView(GetWorld()->GetDeltaSeconds(), OUT ViewInfo);
+
+			FHitResult HitResult;
+			GetWorld()->LineTraceSingleByObjectType(OUT HitResult, ViewInfo.Location, ViewInfo.Location + ViewInfo.Rotation.Vector() * 10000, FCollisionObjectQueryParams());
+
+			if (!HitResult.GetActor() || !HitResult.GetActor()->FindComponentByClass<UTriggerableComponent>())
+				return;
+
+			AGlobalDatabaseActor::GetInstance()->GetTiant()->OrderUse(HitResult.GetActor());
+		}
+	});
+	
 
 	/*
 	 * TriggeredActor: The Wall which starts this event
@@ -64,7 +94,15 @@ void APuzzleLambdaActor::BeginPlay()
 
 		Params.Actors[0]->SetActorLocation(Params.Actors[0]->GetActorLocation() + Params.Vectors[0]);
 
-		AMySpeechRecognitionActor::GetInstance()->EnablePhrase("use",true);
+		TArray<UActorComponent*> Components = AGlobalDatabaseActor::GetInstance()->GetTiant()->GetComponentsByClass(UTriggerableComponent::StaticClass());
+
+		for(auto var : Components)
+		{
+			UTriggerableComponent* Component = Cast<UTriggerableComponent>(var);
+
+			if (Component->GetPredefinedParameters().Strings.Contains("use"))
+				Component->Enable(true);
+		}
 	});
 
 	/*
@@ -80,7 +118,15 @@ void APuzzleLambdaActor::BeginPlay()
 
 		Params.Actors[0]->SetActorLocation(Params.Actors[0]->GetActorLocation() + Params.Vectors[0]);
 
-		AMySpeechRecognitionActor::GetInstance()->EnablePhrase("there", true);
+		TArray<UActorComponent*> Components = AGlobalDatabaseActor::GetInstance()->GetTiant()->GetComponentsByClass(UTriggerableComponent::StaticClass());
+
+		for (auto var : Components)
+		{
+			UTriggerableComponent* Component = Cast<UTriggerableComponent>(var);
+
+			if (Component->GetPredefinedParameters().Strings.Contains("there"))
+				Component->Enable(true);
+		}
 	});
 
 	/*
@@ -125,7 +171,14 @@ void APuzzleLambdaActor::FireLambda(AActor* TriggeringActor,FTriggerableParams& 
 
 	for (TArray<UTriggerableComponent*>::TConstIterator IterComponent(ActionMap[Params.TriggerAction]); IterComponent; ++IterComponent)
 	{
-		if ((*IterComponent)->GetTriggeringAction() != Params.TriggerAction || !(*IterComponent)->IsEnabled() || (*IterComponent)->GetTriggeringActor() != TriggeringActor || (Params.TriggeredActor!= nullptr && Params.TriggeredActor != (*IterComponent)->GetOwner())) continue;
+		if ((*IterComponent)->GetTriggeringAction() != Params.TriggerAction || !(*IterComponent)->IsEnabled() || (*IterComponent)->GetTriggeringActor() != TriggeringActor || (Params.TriggeredActor!= nullptr && Params.TriggeredActor != (*IterComponent)->GetOwner())) 
+			continue;
+
+		if ((*IterComponent)->GetTriggeringAction() == ETriggerActionEnum::TAE_OnPhraseRecognition && !(*IterComponent)->GetPredefinedParameters().Strings[0].Equals(Params.Strings[0]))
+			continue;
+
+		if ((*IterComponent)->GetTriggeringAction() == ETriggerActionEnum::TAE_OnGesture && (!(*IterComponent)->GetPredefinedParameters().Strings[0].Equals(Params.Strings[0]) || !(*IterComponent)->GetPredefinedParameters().Strings[1].Equals(Params.Strings[1])))
+			continue;
 
 		FTriggerableParams::SetParameter(Params, (*IterComponent)->GetPredefinedParameters());
 		LambdasMap[(*IterComponent)->GetLambdaEnum()](TriggeringActor, (*IterComponent)->GetOwner(), Params);

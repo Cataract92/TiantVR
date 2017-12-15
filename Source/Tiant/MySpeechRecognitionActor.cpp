@@ -6,55 +6,10 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "TriggerableComponent.h"
+#include "PuzzleLambdaActor.h"
 
 
 #define AddDynamic( UserObject, FuncName ) __Internal_AddDynamic( UserObject, FuncName, STATIC_FUNCTION_FNAME( TEXT( #FuncName ) ) )
-
-void AMySpeechRecognitionActor::ProcessPhrase(FString Phrase)
-{
-	if (Phrase.Equals("there") && PhrasesMap["there"].bEnable)
-	{
-		UCameraComponent* Camera = GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UCameraComponent>();
-
-		if (Camera)
-		{
-			FMinimalViewInfo ViewInfo;
-			Camera->GetCameraView(GetWorld()->GetDeltaSeconds(), OUT ViewInfo);
-
-			FHitResult HitResult;
-			GetWorld()->LineTraceSingleByObjectType(OUT HitResult, ViewInfo.Location, ViewInfo.Location + ViewInfo.Rotation.Vector() * 10000, FCollisionObjectQueryParams());
-			FVector HitLocation = HitResult.Location;
-
-			ATiantCharacter* TiantCharacter = AGlobalDatabaseActor::GetInstance()->GetTiant();
-			AAIController* Controller = Cast<AAIController>(TiantCharacter->GetController());
-
-			EPathFollowingRequestResult::Type Result = Controller->MoveToLocation(HitLocation);
-		}
-	}
-	else if (Phrase.Equals("use") && PhrasesMap["use"].bEnable)
-	{
-		UCameraComponent* Camera = GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UCameraComponent>();
-
-		if (Camera)
-		{
-			FMinimalViewInfo ViewInfo;
-			Camera->GetCameraView(GetWorld()->GetDeltaSeconds(), OUT ViewInfo);
-
-			FHitResult HitResult;
-			GetWorld()->LineTraceSingleByObjectType(OUT HitResult, ViewInfo.Location, ViewInfo.Location + ViewInfo.Rotation.Vector() * 10000, FCollisionObjectQueryParams());
-
-			if (!HitResult.GetActor() || !HitResult.GetActor()->FindComponentByClass<UTriggerableComponent>())
-				return;
-
-			AGlobalDatabaseActor::GetInstance()->GetTiant()->OrderUse(HitResult.GetActor());
-		}
-	}
-}
-
-void AMySpeechRecognitionActor::EnablePhrase(FString Phrase, bool bDoEnable)
-{
-	PhrasesMap[Phrase].bEnable = bDoEnable;
-}
 
 // Sets default values
 AMySpeechRecognitionActor::AMySpeechRecognitionActor()
@@ -69,7 +24,6 @@ void AMySpeechRecognitionActor::BeginPlay()
 	Super::BeginPlay();
 	
 	OnWordsSpoken.AddDynamic(this, &AMySpeechRecognitionActor::OnWordSpoken);
-	OnUnknownPhrase.AddDynamic(this, &AMySpeechRecognitionActor::OnUnregPhrase);
 	
 	if (Init(ESpeechRecognitionLanguage::VE_English)) {
 		
@@ -107,17 +61,12 @@ void AMySpeechRecognitionActor::EndPlay(const EEndPlayReason::Type EndPlayReason
 void AMySpeechRecognitionActor::OnWordSpoken(FRecognisedPhrases Phrases)
 {
 	TArray<FString> PhraseArray = Phrases.phrases;
-	FString Phrase;
 	for (auto& Phrase : PhraseArray)
 	{
-		//AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Reg Phrase: "+ Phrase);
-
-		ProcessPhrase(Phrase);
+		FTriggerableParams PhraseRecognitionParams(ETriggerActionEnum::TAE_OnPhraseRecognition);
+		PhraseRecognitionParams.Strings[0] = Phrase;
+		APuzzleLambdaActor::GetInstance()->FireLambda(GetWorld()->GetFirstPlayerController()->GetPawn(), PhraseRecognitionParams);
 	}
-}
-
-void AMySpeechRecognitionActor::OnUnregPhrase() {
-	//AGlobalDatabaseActor::GetInstance()->PrintDebugMessage("Unreg Phrase");
 }
 
 AMySpeechRecognitionActor* AMySpeechRecognitionActor::GetInstance()

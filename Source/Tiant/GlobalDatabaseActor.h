@@ -24,7 +24,10 @@ enum ETriggerActionEnum
 	TAE_TiantIsOverlapping UMETA(DisplayName = "Tiant Is Overlapping"),
 	TAE_OnTick UMETA(DisplayName = "On Tick"),
 	TAE_OnTiantInteraction UMETA(DisplayName = "On Tiant Interaction"),
-	TAE_ViewRayCastHit UMETA(DisplayName = "On View-RayCast Hit"), TAE_NotSet UMETA(DisplayName = "Not Set | Do not use")
+	TAE_ViewRayCastHit UMETA(DisplayName = "On View-RayCast Hit"), 
+	TAE_OnPhraseRecognition UMETA(DisplayName = "On Phrase Recognition"),
+	TAE_OnGesture UMETA(DisplayName = "On Gesture"),
+	TAE_NotSet UMETA(DisplayName = "Not Set | Do not use")
 };
 
 UENUM(BlueprintType)
@@ -34,6 +37,8 @@ enum ELambdaEnum
 	LE_Scene1_MoveWall UMETA(DisplayName = "Scene 1 | Move Wall"),
 	LE_Scene1_MoveWall2 UMETA(DisplayName = "Scene 1 | Move Wall2"),
 	LE_Scene1_RotateMirror UMETA(DisplayName = "Scene 1 | Rotate Mirror"),
+	LE_Scene1_OrderTiantMove UMETA(DisplayName = "Scene 1 | Order Tiant Move At LookAt"),
+	LE_Scene1_OrderTiantUse UMETA(DisplayName = "Scene 1 | Order Tiant Use"),
 	LE_Scene1_DoNothing UMETA(DisplayName = "Scene 1 | DoNothing")
 };
 
@@ -50,6 +55,9 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (EditCondition = bUseActors))
 		TArray<AActor*> Actors;
+
+	UPROPERTY(EditAnywhere, meta = (EditCondition = bUseStrings))
+		TArray<FString> Strings;
 
 	AActor* TriggeredActor = nullptr;
 
@@ -77,6 +85,10 @@ public:
 		{
 			Parameter.Actors = PredefinedParameter.Actors;
 		}
+		if (PredefinedParameter.bUseStrings)
+		{
+			Parameter.Strings = PredefinedParameter.Strings;
+		}
 	}
 
 private:
@@ -85,6 +97,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 		bool bUseActors;
+
+	UPROPERTY(EditAnywhere)
+		bool bUseStrings;
 };
 
 UCLASS()

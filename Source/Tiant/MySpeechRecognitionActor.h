@@ -19,9 +19,6 @@ struct FCustomPhraseStruct
 public:
 
 	UPROPERTY(EditAnywhere)
-	bool bEnable = false;
-
-	UPROPERTY(EditAnywhere)
 	FString Phrase;
 
 	UPROPERTY(EditAnywhere)
@@ -54,14 +51,9 @@ public:
 	UFUNCTION()
 	void OnWordSpoken(FRecognisedPhrases Phrases);
 
-	UFUNCTION()
-	void OnUnregPhrase();
-
 	static AMySpeechRecognitionActor* GetInstance();
 
 private:
-
-	void ProcessPhrase(FString Phrase);
 
 	UPROPERTY(EditAnywhere)
 	TArray<FCustomPhraseStruct> Phrases;
